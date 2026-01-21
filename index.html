@@ -411,6 +411,64 @@
             margin-left: 5px;
             font-weight: bold;
         }
+
+        /* --- Focus Mode (Full Screen) --- */
+        .focus-mode {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            z-index: 2000;
+            background: white;
+            padding: 30px;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 0 50px rgba(0, 0, 0, 0.3);
+        }
+
+        .focus-mode .levels-container {
+            max-height: none;
+            /* Let flex grow handle it */
+            flex: 1;
+            margin-bottom: 20px;
+            border: 1px solid #ddd;
+            padding: 10px;
+            border-radius: 6px;
+        }
+
+        .focus-mode .levels-header {
+            margin-bottom: 20px;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 10px;
+        }
+
+        /* Compact Grid in Focus Mode */
+        .focus-mode .levels-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 10px;
+            align-content: flex-start;
+        }
+
+        .focus-mode .level-item {
+            margin-bottom: 0;
+        }
+
+        /* Internal Header for Focus Mode */
+        .focus-header {
+            display: none;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .focus-mode .focus-header {
+            display: flex;
+        }
     </style>
 </head>
 
@@ -490,10 +548,19 @@
             <div class="form-group">
                 <div class="levels-header">
                     <label style="margin:0; font-size:1.1em;">Levels 列表配置:</label>
-                    <button class="btn btn-outline" onclick="toggleBulkEdit()">✎ 批量编辑 / 导入 (Bulk Edit)</button>
+                    <div>
+                        <button class="btn btn-outline" onclick="toggleFocusMode()" title="全屏专注模式">⛶ Focus Mode</button>
+                        <button class="btn btn-outline" onclick="toggleBulkEdit()">✎ 批量编辑 / 导入 (Bulk Edit)</button>
+                    </div>
                 </div>
 
                 <div id="normalView" class="levels-wrapper">
+                    <!-- Header purely for Focus Mode -->
+                    <div class="focus-header">
+                        <span style="font-size:1.2em; font-weight:bold; color:#2c3e50;">⛶ Focus Mode (Editing)</span>
+                        <button class="btn btn-outline" onclick="toggleFocusMode()">✕ Exit Focus</button>
+                    </div>
+
                     <div id="levelsList" class="levels-container"></div>
                     <button class="btn"
                         style="width:100%; background:#fff; border:2px dashed #ddd; color:#666; margin-top:5px;"
@@ -1067,6 +1134,21 @@
             } else {
                 normalView.style.display = 'block';
                 bulkView.style.display = 'none';
+            }
+        }
+
+        // --- Focus Mode ---
+        function toggleFocusMode() {
+            const wrapper = document.getElementById('normalView'); // We make the wrapper full screen
+            wrapper.classList.toggle('focus-mode');
+
+            // Adjust header visibility or style if needed inside focus mode
+            // Since we applied styles to .focus-mode children, it should be fine.
+
+            if (wrapper.classList.contains('focus-mode')) {
+                // Add an explicit close button or header hint if needed
+                // For now, the toggle button is outside the wrapper, which is a problem if wrapper covers it.
+                // WE NEED TO MOVE controls inside or handle the wrapper differently.
             }
         }
         function copyCurrentToBulk() {
