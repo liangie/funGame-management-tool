@@ -1,0 +1,1194 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Series Config Editor V7 (Level Details)</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: #f4f6f8;
+            padding: 20px;
+            max-width: 950px;
+            margin: 0 auto;
+            color: #333;
+        }
+
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 30px;
+        }
+
+        .container {
+            background-color: white;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.08);
+        }
+
+        /* --- Controls Bar --- */
+        .file-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #eee;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .left-actions,
+        .right-actions {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        /* --- Form Elements --- */
+        .form-group {
+            margin-bottom: 18px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 600;
+            color: #555;
+        }
+
+        select,
+        input[type="text"],
+        input[type="number"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-size: 14px;
+        }
+
+        select:focus,
+        input:focus {
+            border-color: #3498db;
+            outline: none;
+        }
+
+        /* --- Levels List --- */
+        .levels-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .levels-wrapper {
+            border: 1px solid #e1e4e8;
+            border-radius: 6px;
+            background: #fafafa;
+            padding: 10px;
+        }
+
+        .levels-container {
+            max-height: 500px;
+            overflow-y: auto;
+            margin-bottom: 10px;
+            padding-right: 5px;
+        }
+
+        .level-item {
+            background: white;
+            border: 1px solid #d1d5da;
+            border-radius: 4px;
+            margin-bottom: 6px;
+            padding: 8px 12px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: background 0.2s;
+        }
+
+        .level-item:hover {
+            background-color: #f8faff;
+            border-color: #3498db;
+        }
+
+        .level-content {
+            display: flex;
+            align-items: center;
+            flex: 1;
+            cursor: grab;
+            overflow: hidden;
+        }
+
+        .level-content:active {
+            cursor: grabbing;
+        }
+
+        .level-index {
+            color: #aaa;
+            font-size: 12px;
+            margin-right: 12px;
+            width: 25px;
+            flex-shrink: 0;
+            user-select: none;
+        }
+
+        .level-text-group {
+            display: flex;
+            align-items: baseline;
+            gap: 10px;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+        }
+
+        .level-id {
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .level-name {
+            font-size: 0.9em;
+            color: #27ae60;
+            background: #e8f5e9;
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+
+        /* --- Item Actions --- */
+        .level-actions {
+            display: flex;
+            gap: 5px;
+            flex-shrink: 0;
+            margin-left: 10px;
+        }
+
+        .btn-icon {
+            width: 28px;
+            height: 28px;
+            border: 1px solid #ddd;
+            background: #fff;
+            border-radius: 4px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #666;
+            transition: all 0.2s;
+        }
+
+        .btn-icon:hover {
+            background: #eee;
+        }
+
+        .btn-icon.delete:hover {
+            background: #fff5f5;
+            border-color: #ffcdd2;
+            color: #e74c3c;
+        }
+
+        .btn-icon.info {
+            color: #3498db;
+            border-color: #aed6f1;
+        }
+
+        .btn-icon.info:hover {
+            background-color: #ebf5fb;
+        }
+
+        /* --- Main Buttons --- */
+        .btn {
+            border: none;
+            padding: 9px 18px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: background 0.2s;
+            color: white;
+            background-color: #3498db;
+            white-space: nowrap;
+        }
+
+        .btn:hover {
+            background-color: #2980b9;
+        }
+
+        .btn:disabled {
+            background-color: #bdc3c7;
+            cursor: not-allowed;
+        }
+
+        .btn-config {
+            background-color: #e67e22;
+        }
+
+        .btn-config:hover {
+            background-color: #d35400;
+        }
+
+        .btn-success {
+            background-color: #27ae60;
+        }
+
+        .btn-success:hover {
+            background-color: #219150;
+        }
+
+        .btn-wiki {
+            background-color: #8e44ad;
+        }
+
+        .btn-wiki:hover {
+            background-color: #732d91;
+        }
+
+        .btn-copy {
+            background-color: #607d8b;
+        }
+
+        .btn-copy:hover {
+            background-color: #546e7a;
+        }
+
+        .btn-outline {
+            background: white;
+            border: 1px solid #3498db;
+            color: #3498db;
+        }
+
+        .btn-outline:hover {
+            background: #f0f8ff;
+        }
+
+        /* --- Bulk Edit Area --- */
+        .bulk-edit-area {
+            display: none;
+            margin-top: 15px;
+            border-top: 1px dashed #ddd;
+            padding-top: 15px;
+            background: #fff;
+        }
+
+        textarea {
+            width: 100%;
+            height: 140px;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-family: Consolas, "Courier New", monospace;
+            resize: vertical;
+            box-sizing: border-box;
+            margin-bottom: 12px;
+            line-height: 1.4;
+        }
+
+        .checkbox-wrapper {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+            padding: 10px;
+            background: #f9f9f9;
+            border: 1px solid #eee;
+            border-radius: 4px;
+        }
+
+        .checkbox-wrapper input {
+            width: auto;
+            margin-right: 10px;
+            transform: scale(1.2);
+        }
+
+        .checkbox-wrapper label {
+            margin: 0;
+            font-weight: normal;
+            cursor: pointer;
+        }
+
+        .checkbox-note {
+            display: block;
+            font-size: 12px;
+            color: #666;
+            margin-top: 4px;
+        }
+
+        .bulk-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+        }
+
+        /* --- Modals (Wiki & Details) Styles --- */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(2px);
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 5% auto;
+            padding: 30px;
+            border: 1px solid #888;
+            border-radius: 8px;
+            width: 80%;
+            max-width: 700px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            position: relative;
+        }
+
+        .close {
+            position: absolute;
+            right: 20px;
+            top: 15px;
+            color: #aaa;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .close:hover {
+            color: black;
+        }
+
+        /* Wiki Specific */
+        .wiki-section {
+            margin-bottom: 25px;
+        }
+
+        .wiki-section h3 {
+            margin-top: 0;
+            color: #2c3e50;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 8px;
+        }
+
+        .wiki-section p,
+        .wiki-section li {
+            line-height: 1.6;
+            color: #444;
+        }
+
+        .wiki-tag {
+            background: #eee;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 0.9em;
+            color: #c0392b;
+        }
+
+        /* JSON Details Specific */
+        pre.json-display {
+            background: #282c34;
+            color: #abb2bf;
+            padding: 15px;
+            border-radius: 6px;
+            overflow-x: auto;
+            font-family: Consolas, monospace;
+            font-size: 14px;
+            max-height: 600px;
+        }
+
+        .editor-area {
+            display: none;
+        }
+
+        .config-loaded-indicator {
+            color: #27ae60;
+            font-size: 0.85em;
+            display: none;
+            margin-left: 5px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>Series Config Editor <span style="font-size:0.5em; color:#888;">V7</span></h1>
+
+    <div class="container">
+        <div class="file-controls">
+            <div class="left-actions" style="display:flex; flex-direction:column; align-items:flex-start; gap:8px;">
+                <div style="display:flex; align-items:center; gap:10px;">
+                    <input type="file" id="fileInput" accept=".json" style="display: none;">
+                    <button class="btn" style="width: 220px;" onclick="document.getElementById('fileInput').click()">📂
+                        加载 SeriesCfg</button>
+                    <span id="seriesFileName" style="color:#555; font-weight:bold; font-size:0.9em;">(未加载)</span>
+                </div>
+
+                <div style="display:flex; align-items:center; gap:10px;">
+                    <input type="file" id="levelCfgInput" accept=".json" style="display: none;">
+                    <button class="btn btn-config" style="width: 220px;"
+                        onclick="document.getElementById('levelCfgInput').click()">📂 加载详情配置 (LevelCfg)</button>
+                    <span id="configLoadedMsg" class="config-loaded-indicator" style="display:none; color:#27ae60;">✓
+                        详情已关联</span>
+                    <span id="levelFileName" style="color:#555; font-size:0.9em;"></span>
+                </div>
+            </div>
+
+            <div class="right-actions" style="align-self: flex-start;">
+                <button class="btn btn-outline" onclick="showOnlineSettings()"
+                    title="设置 Worker URL & Password">⚙️</button>
+                <button class="btn btn-outline" onclick="loadRemoteSeriesConfig()">☁️ Load Remote</button>
+                <button class="btn btn-danger" id="saveRemoteBtn" onclick="saveToRemote()">🚀 Save Remote</button>
+                <div style="height:20px; border-left:1px solid #ccc; margin:0 5px;"></div>
+                <button class="btn btn-wiki" onclick="showWiki()">📖 教程</button>
+                <button class="btn btn-copy" id="copyBtn" onclick="copyJson()" disabled>📋 Copy JSON</button>
+                <button class="btn btn-success" id="exportBtn" onclick="exportJson()" disabled>💾 Export JSON</button>
+            </div>
+        </div>
+
+        <!-- NEW: Config Set Controls -->
+        <div id="configControls"
+            style="background:#fff3e0; padding:15px; border-radius:6px; margin-bottom:20px; border:1px solid #ffe0b2; display:flex; align-items:center; gap:15px;">
+            <div style="flex:1;">
+                <label for="configKeySelect" style="display:inline-block; margin-right:10px; color:#e65100;">🔧 当前配置集
+                    (Current Config Set):</label>
+                <select id="configKeySelect" style="width:auto; min-width:200px; display:inline-block;"
+                    onchange="loadSelectedConfigKey()"></select>
+            </div>
+
+            <button class="btn btn-outline" onclick="showMappingModal()" style="border-color:#e65100; color:#e65100;">🌍
+                地区映射 (Mapping)</button>
+            <div style="height:20px; border-left:1px solid #ccc; margin:0 5px;"></div>
+            <button class="btn btn-outline" onclick="addNewConfigSet()" title="新建空配置集">Math.Empty</button>
+            <button class="btn btn-outline" onclick="duplicateConfigSet()" title="复制当前配置集">Math.Copy</button>
+            <button class="btn btn-outline" onclick="deleteConfigSet()"
+                style="color:#c0392b; border-color:#c0392b;">Math.Delete</button>
+        </div>
+
+        <div id="editorArea" class="editor-area">
+
+            <div class="form-group">
+                <label for="idSelect">选择 ID (Select Series ID):</label>
+                <select id="idSelect" onchange="loadSelectedSeries()"></select>
+            </div>
+
+            <div style="display: flex; gap: 20px;">
+                <div class="form-group" style="flex: 1;">
+                    <label>Order (排序):</label>
+                    <input type="number" id="orderInput" onchange="updateCurrentData()">
+                </div>
+                <div class="form-group" style="flex: 2;">
+                    <label>Img (图片名):</label>
+                    <input type="text" id="imgInput" onchange="updateCurrentData()">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="levels-header">
+                    <label style="margin:0; font-size:1.1em;">Levels 列表配置:</label>
+                    <button class="btn btn-outline" onclick="toggleBulkEdit()">✎ 批量编辑 / 导入 (Bulk Edit)</button>
+                </div>
+
+                <div id="normalView" class="levels-wrapper">
+                    <div id="levelsList" class="levels-container"></div>
+                    <button class="btn"
+                        style="width:100%; background:#fff; border:2px dashed #ddd; color:#666; margin-top:5px;"
+                        onclick="addNewLevel()">+ 新增一项 (Add Level)</button>
+                </div>
+
+                <div id="bulkView" class="bulk-edit-area">
+                    <div style="margin-bottom:8px; color:#555;">请在下方粘贴新的 Levels ID 列表（支持逗号分隔或换行）：</div>
+
+                    <textarea id="bulkTextarea" placeholder="例如: s200, s201, s202..."></textarea>
+
+                    <div class="checkbox-wrapper">
+                        <input type="checkbox" id="overwriteCheckbox">
+                        <label for="overwriteCheckbox">
+                            <strong>覆盖现有列表 (Overwrite Mode)</strong>
+                            <span class="checkbox-note">
+                                🔲 <strong>不选中 (推荐)</strong>: 新粘贴的数据会排在<strong>最前面</strong>，旧列表中剩余的数据会自动跟在后面（不丢失数据）。<br>
+                                ✅ <strong>选中</strong>: <strong>完全删除</strong>旧列表，只保留上方文本框中的内容。
+                            </span>
+                        </label>
+                    </div>
+
+                    <div class="bulk-actions">
+                        <button class="btn btn-outline" style="margin-right:auto;"
+                            onclick="copyCurrentToBulk()">加载当前列表</button>
+                        <button class="btn" onclick="toggleBulkEdit()">取消</button>
+                        <button class="btn btn-success" onclick="applyBulkChanges()">应用修改</button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <div id="wikiModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeWiki()">&times;</span>
+            <h2 style="margin-top:0; color:#2c3e50; border-bottom:1px solid #ddd; padding-bottom:15px;">📖 工具使用教程 (Wiki)
+            </h2>
+
+            <div class="wiki-section">
+                <h3>1. 基础操作</h3>
+                <ul>
+                    <li>点击左上角的 <span class="wiki-tag">📂 加载 SeriesCfg</span> 加载主数据文件。</li>
+                    <li><strong>(新)</strong> 点击 <span class="wiki-tag" style="color:#d35400;">📂 加载详情配置</span> 上传
+                        <code>LevelCfg.json</code>。成功后，列表会自动显示游戏名称，并提供详情查看功能。
+                    </li>
+                    <li>在下拉菜单中切换不同的 Series ID (xl1, xl2...) 进行编辑。</li>
+                </ul>
+            </div>
+
+            <div class="wiki-section">
+                <h3>2. Levels 列表与详情</h3>
+                <ul>
+                    <li><strong>排序</strong>：支持鼠标拖拽或点击右侧箭头。</li>
+                    <li><strong>查看详情</strong>：如果加载了配置，点击列表项右侧的 <span class="wiki-tag">ℹ️</span> 图标，可查看该关卡的完整 JSON
+                        信息（Path, Stages, Rule 等）。</li>
+                </ul>
+            </div>
+
+            <div class="wiki-section">
+                <h3>3. 批量编辑 (Bulk Edit)</h3>
+                <ul>
+                    <li>支持从 Excel 或文本中粘贴 ID 列表。</li>
+                    <li><strong>智能合并</strong>：默认将新 ID 置顶，旧 ID 顺延。</li>
+                    <li><strong>覆盖模式</strong>：勾选 Checkbox 后，完全替换现有列表。</li>
+                </ul>
+            </div>
+
+            <div style="text-align: right;">
+                <button class="btn" onclick="closeWiki()">我明白了</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="detailModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeDetailModal()">&times;</span>
+            <h2 id="detailTitle" style="margin-top:0; color:#2c3e50; padding-bottom:10px;">关卡详情</h2>
+            <pre id="detailContent" class="json-display"></pre>
+            <div style="text-align: right; margin-top:15px;">
+                <button class="btn" onclick="closeDetailModal()">关闭</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="mappingModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeMappingModal()">&times;</span>
+            <h2 style="margin-top:0; color:#2c3e50;">🌍 地区映射管理 (Locale Mapping)</h2>
+            <p style="color:#666; margin-bottom:15px;">设置不同地区 (Locale) 使用哪套配置 (Config Key)。例如 US -> base_us。</p>
+
+            <div style="margin-bottom: 20px;">
+                <table style="width:100%; border-collapse: collapse;">
+                    <thead>
+                        <tr style="background:#f4f6f8; text-align:left;">
+                            <th style="padding:10px; border-bottom:2px solid #ddd;">地区 (Locale)</th>
+                            <th style="padding:10px; border-bottom:2px solid #ddd;">指向的配置集 (Config Key)</th>
+                            <th style="padding:10px; border-bottom:2px solid #ddd;">操作</th>
+                        </tr>
+                    </thead>
+                    <tbody id="mappingTableBody">
+                        <!-- Mapping rows go here -->
+                    </tbody>
+                </table>
+            </div>
+
+            <div style="background:#fafafa; padding:15px; border-radius:6px; border:1px dashed #ddd;">
+                <strong>新增映射:</strong>
+                <div style="display:flex; gap:10px; margin-top:10px;">
+                    <input type="text" id="newLocaleInput" placeholder="Locale (e.g. CN, KR)" style="flex:1;">
+                    <select id="newMapKeySelect" style="flex:1;"></select>
+                    <button class="btn btn-success" onclick="addNewMapping()">+ 添加</button>
+                </div>
+            </div>
+
+            <div style="text-align: right; margin-top:20px;">
+                <button class="btn" onclick="closeMappingModal()">关闭</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- Cloudflare Worker Settings ---
+        let workerConfig = {
+            url: localStorage.getItem("cf_worker_url") || "",
+            pwd: localStorage.getItem("cf_worker_pwd") || ""
+        };
+
+        function showOnlineSettings() {
+            const url = prompt("请输入 Cloudflare Worker URL (e.g. https://your-worker.workers.dev):", workerConfig.url);
+            if (url !== null) {
+                const pwd = prompt("请输入访问密码 (Access Password):", workerConfig.pwd);
+                if (pwd !== null) {
+                    workerConfig.url = url.trim();
+                    workerConfig.pwd = pwd.trim();
+                    localStorage.setItem("cf_worker_url", workerConfig.url);
+                    localStorage.setItem("cf_worker_pwd", workerConfig.pwd);
+                    alert("设置已保存！能够尝试“从网络加载”和“保存到网络”了。");
+                }
+            }
+        }
+
+        async function loadRemoteSeriesConfig() {
+            if (!workerConfig.url) { showOnlineSettings(); if (!workerConfig.url) return; }
+
+            const rawUrl = prompt("请输入 Gist Raw URL (用于读取):", localStorage.getItem("gist_raw_url") || "");
+            if (!rawUrl) return;
+            localStorage.setItem("gist_raw_url", rawUrl);
+
+            try {
+                document.getElementById('seriesFileName').textContent = "Downloading...";
+                const resp = await fetch(rawUrl + "?t=" + Date.now());
+                if (!resp.ok) throw new Error("Network Error: " + resp.status);
+
+                const raw = await resp.json();
+
+                // Same parsing logic as file input
+                if (Array.isArray(raw)) {
+                    fullConfigData = {
+                        configs: { "base_global": raw },
+                        mapping: { "default": "base_global" }
+                    };
+                } else if (raw.configs && raw.mapping) {
+                    fullConfigData = raw;
+                } else {
+                    throw new Error("无法识别的 JSON 结构");
+                }
+
+                initConfigKeySelector();
+                document.getElementById('seriesFileName').textContent = "☁️ Remote Gist";
+                document.getElementById('seriesFileName').style.color = "#2980b9";
+                document.getElementById('exportBtn').disabled = false;
+                document.getElementById('copyBtn').disabled = false;
+                document.getElementById('editorArea').style.display = 'block';
+
+                alert("远程配置加载成功！");
+
+            } catch (err) {
+                alert("加载失败: " + err.message);
+                document.getElementById('seriesFileName').textContent = "(加载失败)";
+            }
+        }
+
+        async function saveToRemote() {
+            if (!workerConfig.url || !workerConfig.pwd) {
+                showOnlineSettings();
+                if (!workerConfig.url || !workerConfig.pwd) return;
+            }
+
+            if (!confirm("⚠️ 确定要保存修改到远程 Gist 吗？这将直接影响线上配置！")) return;
+
+            const btn = document.getElementById('saveRemoteBtn');
+            const originalText = btn.textContent;
+            btn.textContent = "Saving...";
+            btn.disabled = true;
+
+            try {
+                // Construct the Gist payload
+                const payload = {
+                    files: {
+                        "SeriesLocaleCfg.json": {
+                            content: JSON.stringify(fullConfigData, null, 2)
+                        }
+                    }
+                };
+
+                const resp = await fetch(workerConfig.url, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "X-Auth-Password": workerConfig.pwd
+                    },
+                    body: JSON.stringify(payload)
+                });
+
+                if (!resp.ok) {
+                    const errText = await resp.text();
+                    throw new Error(`Server Error (${resp.status}): ${errText}`);
+                }
+
+                const resJson = await resp.json();
+                console.log("Save Response:", resJson);
+
+                alert("✅ 保存成功！Gist 已更新。");
+
+            } catch (err) {
+                alert("❌ 保存失败: " + err.message);
+            } finally {
+                btn.textContent = originalText;
+                btn.disabled = false;
+            }
+        }
+
+        // Data Structure:
+        // fullConfigData = { 
+        //    configs: { "base_global": [...], "base_us": [...] }, 
+        //    mapping: { "default": "base_global", "US": "base_us" } 
+        // }
+        let fullConfigData = { configs: {}, mapping: {} };
+
+        // Current Context
+        let currentConfigKey = "";
+        let jsonData = []; // Points to fullConfigData.configs[currentConfigKey]
+
+        let levelConfigMap = {};
+        let currentSeriesIndex = -1;
+
+        // --- File Loading: SeriesCfg ---
+        document.getElementById('fileInput').addEventListener('change', function (event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                try {
+                    const raw = JSON.parse(e.target.result);
+
+                    // 1. Data Migration / Detection
+                    if (Array.isArray(raw)) {
+                        // Legacy Array Format -> Convert to New Structure
+                        fullConfigData = {
+                            configs: { "base_global": raw },
+                            mapping: { "default": "base_global" }
+                        };
+                        alert("⚠️ 检测到旧版格式，已自动转换为新版结构 (base_global)。");
+                    } else if (raw.configs && raw.mapping) {
+                        // New Format
+                        fullConfigData = raw;
+                    } else {
+                        throw new Error("无法识别的 JSON 结构");
+                    }
+
+                    // 2. Initialize UI
+                    initConfigKeySelector();
+                    document.getElementById('seriesFileName').textContent = file.name;
+                    document.getElementById('seriesFileName').style.color = "#27ae60";
+
+                    document.getElementById('exportBtn').disabled = false;
+                    document.getElementById('copyBtn').disabled = false;
+                    document.getElementById('editorArea').style.display = 'block';
+
+                } catch (err) { alert('解析错误: ' + err.message); }
+            };
+            reader.readAsText(file);
+        });
+
+        // --- File Loading: LevelCfg ---
+        document.getElementById('levelCfgInput').addEventListener('change', function (event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                try {
+                    const cfgData = JSON.parse(e.target.result);
+                    levelConfigMap = {};
+                    cfgData.forEach(item => { if (item.ID) levelConfigMap[item.ID] = item; });
+
+                    document.getElementById('configLoadedMsg').style.display = "inline";
+                    document.getElementById('levelFileName').textContent = file.name;
+                    document.getElementById('levelFileName').style.color = "#27ae60";
+                    if (currentSeriesIndex !== -1) renderLevelsList();
+                    alert(`成功加载详情配置！包含 ${cfgData.length} 个关卡数据。`);
+                } catch (err) { alert('LevelCfg 解析错误: ' + err.message); }
+            };
+            reader.readAsText(file);
+        });
+
+        // --- Config Key Management ---
+        function initConfigKeySelector() {
+            // 1. Populate Config Key Select
+            const keySelect = document.getElementById('configKeySelect');
+            keySelect.innerHTML = '';
+
+            const keys = Object.keys(fullConfigData.configs);
+            if (keys.length === 0) {
+                // Should not happen if migrated correctly, but safe guard
+                fullConfigData.configs["base_global"] = [];
+                keys.push("base_global");
+            }
+
+            keys.forEach(k => {
+                const opt = document.createElement('option');
+                opt.value = k; opt.text = k;
+                keySelect.appendChild(opt);
+            });
+
+            // 2. Initial Selection
+            currentConfigKey = keys[0]; // Default to first
+            keySelect.value = currentConfigKey;
+
+            loadSelectedConfigKey();
+        }
+
+        function loadSelectedConfigKey() {
+            currentConfigKey = document.getElementById('configKeySelect').value;
+            jsonData = fullConfigData.configs[currentConfigKey];
+
+            // Re-init Series Selector for this config set
+            initSeriesEditor();
+        }
+
+        function addNewConfigSet() {
+            const name = prompt("请输入新配置集名称 (例如 base_cn):", "base_cn");
+            if (!name) return;
+            if (fullConfigData.configs[name]) { alert("名称已存在"); return; }
+
+            // Clone currently selected data or empty
+            if (confirm("是否复制当前选中的配置数据？(取消则创建空配置)")) {
+                fullConfigData.configs[name] = JSON.parse(JSON.stringify(jsonData));
+            } else {
+                fullConfigData.configs[name] = [];
+            }
+
+            initConfigKeySelector(); // Refresh list
+            document.getElementById('configKeySelect').value = name;
+            loadSelectedConfigKey();
+        }
+
+        function duplicateConfigSet() {
+            const name = prompt(`请输入新配置集名称 (复制自 ${currentConfigKey}):`, `${currentConfigKey}_copy`);
+            if (!name) return;
+            if (fullConfigData.configs[name]) { alert("名称已存在"); return; }
+
+            fullConfigData.configs[name] = JSON.parse(JSON.stringify(jsonData));
+
+            initConfigKeySelector();
+            document.getElementById('configKeySelect').value = name;
+            loadSelectedConfigKey();
+        }
+
+        function deleteConfigSet() {
+            const keys = Object.keys(fullConfigData.configs);
+            if (keys.length <= 1) { alert("至少保留一个配置集！"); return; }
+
+            if (confirm(`确定要删除配置集 [${currentConfigKey}] 吗？此操作不可恢复！`)) {
+                delete fullConfigData.configs[currentConfigKey];
+                // Clean up mappings pointing to this
+                for (let loc in fullConfigData.mapping) {
+                    if (fullConfigData.mapping[loc] === currentConfigKey) {
+                        delete fullConfigData.mapping[loc];
+                    }
+                }
+                initConfigKeySelector();
+            }
+        }
+
+        // --- Series Editor Logic (Existing adapted) ---
+        function initSeriesEditor() {
+            const select = document.getElementById('idSelect');
+            select.innerHTML = '';
+
+            if (!jsonData || jsonData.length === 0) {
+                // Handle empty config set
+                const opt = document.createElement('option');
+                opt.text = "(无数据 - 点击新增)";
+                select.appendChild(opt);
+                // Disable inputs maybe?
+                currentSeriesIndex = -1;
+                document.getElementById('normalView').style.display = 'none';
+                return;
+            }
+
+            // check duplicate ID
+            let idMap = {};
+            jsonData.forEach((s, i) => {
+                const opt = document.createElement('option');
+                opt.value = i;
+                opt.text = s.ID;
+                if (idMap[s.ID]) opt.text += " (❌冲突)";
+                idMap[s.ID] = true;
+                select.appendChild(opt);
+            });
+
+            select.value = 0;
+            loadSelectedSeries();
+        }
+
+        function loadSelectedSeries() {
+            const select = document.getElementById('idSelect');
+            if (jsonData.length === 0) return;
+
+            currentSeriesIndex = parseInt(select.value);
+            const data = jsonData[currentSeriesIndex];
+
+            document.getElementById('orderInput').value = data.Order;
+            document.getElementById('imgInput').value = data.Img;
+
+            document.getElementById('normalView').style.display = 'block';
+            document.getElementById('bulkView').style.display = 'none';
+            document.getElementById('overwriteCheckbox').checked = false;
+            document.getElementById('bulkTextarea').value = "";
+
+            renderLevelsList();
+        }
+
+        function addNewSeries() {
+            const id = prompt("请输入新的 ID (如 xl100):");
+            if (!id) return;
+
+            // Check if ID exists in current config
+            if (jsonData.some(item => item.ID === id)) {
+                alert("ID 已存在！");
+                return;
+            }
+
+            jsonData.push({
+                "ID": id,
+                "Order": jsonData.length,
+                "Img": "",
+                "Levels": []
+            });
+
+            initSeriesEditor();
+            // Select the new one
+            const select = document.getElementById('idSelect');
+            select.value = jsonData.length - 1;
+            loadSelectedSeries();
+        }
+
+        function removeSeries() {
+            if (currentSeriesIndex === -1) return;
+            if (confirm(`确定删除 ${jsonData[currentSeriesIndex].ID} 吗？`)) {
+                jsonData.splice(currentSeriesIndex, 1);
+                initSeriesEditor();
+            }
+        }
+
+        function updateCurrentData() {
+            if (currentSeriesIndex === -1) return;
+            jsonData[currentSeriesIndex].Order = parseInt(document.getElementById('orderInput').value);
+            jsonData[currentSeriesIndex].Img = document.getElementById('imgInput').value;
+        }
+
+        function renderLevelsList() {
+            if (!jsonData[currentSeriesIndex]) return;
+            const levels = jsonData[currentSeriesIndex].Levels;
+            const container = document.getElementById('levelsList');
+            container.innerHTML = '';
+
+            levels.forEach((id, idx) => {
+                const detail = levelConfigMap[id];
+                const displayName = detail ? detail.Name : '';
+                const hasDetail = !!detail;
+
+                const el = document.createElement('div');
+                el.className = 'level-item';
+                el.dataset.index = idx;
+
+                el.innerHTML = `
+                    <div class="level-content" draggable="true">
+                        <span class="level-index">${idx + 1}</span>
+                        <div class="level-text-group">
+                            <span class="level-id">${id}</span>
+                            ${displayName ? `<span class="level-name">${displayName}</span>` : ''}
+                        </div>
+                    </div>
+                    <div class="level-actions">
+                        ${hasDetail ? `<button class="btn-icon info" onclick="showDetailModal('${id}')" title="查看详情">ℹ️</button>` : ''}
+                        <button class="btn-icon" onclick="moveItem(${idx}, -1)" title="上移">↑</button>
+                        <button class="btn-icon" onclick="moveItem(${idx}, 1)" title="下移">↓</button>
+                        <button class="btn-icon delete" onclick="deleteItem(${idx})" title="删除">✕</button>
+                    </div>
+                `;
+                el.addEventListener('dragstart', handleDragStart);
+                el.addEventListener('dragover', handleDragOver);
+                el.addEventListener('drop', handleDrop);
+                el.addEventListener('dragend', handleDragEnd);
+                container.appendChild(el);
+            });
+        }
+
+        function moveItem(idx, dir) {
+            const levels = jsonData[currentSeriesIndex].Levels;
+            const target = idx + dir;
+            if (target >= 0 && target < levels.length) {
+                [levels[idx], levels[target]] = [levels[target], levels[idx]];
+                renderLevelsList();
+            }
+        }
+        function deleteItem(idx) {
+            if (confirm('确定要删除这项吗？')) {
+                jsonData[currentSeriesIndex].Levels.splice(idx, 1);
+                renderLevelsList();
+            }
+        }
+        function addNewLevel() {
+            const id = prompt("请输入新的 Level ID:");
+            if (id) {
+                const items = id.split(/[,，\s]+/).filter(x => x); // Support multiple add
+                items.forEach(x => jsonData[currentSeriesIndex].Levels.push(x.trim()));
+                renderLevelsList();
+                const c = document.getElementById('levelsList');
+                setTimeout(() => c.scrollTop = c.scrollHeight, 50);
+            }
+        }
+
+        // --- Detail Modal ---
+        function showDetailModal(id) {
+            const data = levelConfigMap[id];
+            if (!data) return;
+            document.getElementById('detailTitle').textContent = `关卡详情: ${id} (${data.Name})`;
+            document.getElementById('detailContent').textContent = JSON.stringify(data, null, 2);
+            document.getElementById('detailModal').style.display = 'block';
+        }
+        function closeDetailModal() { document.getElementById('detailModal').style.display = 'none'; }
+
+        // --- Bulk Edit ---
+        function toggleBulkEdit() {
+            const normalView = document.getElementById('normalView');
+            const bulkView = document.getElementById('bulkView');
+            if (bulkView.style.display === 'none') {
+                normalView.style.display = 'none';
+                bulkView.style.display = 'block';
+                document.getElementById('bulkTextarea').focus();
+            } else {
+                normalView.style.display = 'block';
+                bulkView.style.display = 'none';
+            }
+        }
+        function copyCurrentToBulk() {
+            const currentLevels = jsonData[currentSeriesIndex].Levels;
+            document.getElementById('bulkTextarea').value = currentLevels.join(', ');
+        }
+        function applyBulkChanges() {
+            const rawText = document.getElementById('bulkTextarea').value;
+            const isOverwrite = document.getElementById('overwriteCheckbox').checked;
+            const newLevels = rawText.split(/[\n,]+/).map(item => item.trim()).filter(item => item !== "");
+
+            if (newLevels.length === 0 && isOverwrite && !confirm("列表为空，确定要清空所有 Levels 吗？")) return;
+
+            if (isOverwrite) {
+                jsonData[currentSeriesIndex].Levels = newLevels;
+                alert(`已覆盖！当前列表共 ${newLevels.length} 项。`);
+            } else {
+                const currentLevels = jsonData[currentSeriesIndex].Levels;
+                const newItemsSet = new Set(newLevels);
+                const remainingOldItems = currentLevels.filter(item => !newItemsSet.has(item));
+                const finalList = [...newLevels, ...remainingOldItems];
+                jsonData[currentSeriesIndex].Levels = finalList;
+                alert(`已合并！`);
+            }
+            toggleBulkEdit();
+            renderLevelsList();
+        }
+
+        // --- Drag & Drop ---
+        let dragSrc = null;
+        function handleDragStart(e) { dragSrc = this; e.dataTransfer.effectAllowed = 'move'; this.style.opacity = '0.4'; }
+        function handleDragOver(e) { if (e.preventDefault) e.preventDefault(); return false; }
+        function handleDrop(e) {
+            if (e.stopPropagation) e.stopPropagation();
+            if (dragSrc !== this) {
+                const oldIdx = parseInt(dragSrc.dataset.index);
+                const newIdx = parseInt(this.dataset.index);
+                const levels = jsonData[currentSeriesIndex].Levels;
+                const [item] = levels.splice(oldIdx, 1);
+                levels.splice(newIdx, 0, item);
+                renderLevelsList();
+            }
+            return false;
+        }
+        function handleDragEnd() { this.style.opacity = '1'; }
+
+        // --- Export / Copy ---
+        function exportJson() {
+            const str = JSON.stringify(fullConfigData, null, 2);
+            const blob = new Blob([str], { type: "application/json" });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url; a.download = "SeriesLocaleCfg.json";
+            document.body.appendChild(a); a.click(); document.body.removeChild(a);
+        }
+
+        async function copyJson() {
+            const str = JSON.stringify(fullConfigData, null, 2);
+            try {
+                await navigator.clipboard.writeText(str);
+                const btn = document.getElementById('copyBtn');
+                const t = btn.textContent;
+                btn.textContent = "✅ 已复制Full JSON!";
+                btn.classList.add("btn-success");
+                setTimeout(() => { btn.textContent = t; btn.classList.remove("btn-success"); }, 2000);
+            } catch (err) { alert("复制失败: " + err); }
+        }
+
+        // --- Mapping Modal ---
+        function showMappingModal() {
+            const tbody = document.getElementById('mappingTableBody');
+            tbody.innerHTML = '';
+
+            // Populate Rows
+            for (let locale in fullConfigData.mapping) {
+                const targetKey = fullConfigData.mapping[locale];
+
+                const tr = document.createElement('tr');
+                tr.style.borderBottom = "1px solid #eee";
+                tr.innerHTML = `
+                    <td style="padding:10px; font-family:monospace; font-weight:bold;">${locale}</td>
+                    <td style="padding:10px;">
+                        <span style="background:#e8f5e9; color:#27ae60; padding:2px 6px; border-radius:4px;">${targetKey}</span>
+                    </td>
+                    <td style="padding:10px;">
+                        <button class="btn-icon delete" style="width:24px; height:24px;" onclick="removeMapping('${locale}')" title="删除">✕</button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            }
+
+            // Populate Dropdown
+            const select = document.getElementById('newMapKeySelect');
+            select.innerHTML = '';
+            Object.keys(fullConfigData.configs).forEach(k => {
+                const opt = document.createElement('option');
+                opt.value = k; opt.text = k;
+                select.appendChild(opt);
+            });
+
+            document.getElementById('mappingModal').style.display = 'block';
+        }
+
+        function addNewMapping() {
+            const locale = document.getElementById('newLocaleInput').value.trim();
+            const target = document.getElementById('newMapKeySelect').value;
+
+            if (!locale || !target) { alert("请填写完整"); return; }
+            if (fullConfigData.mapping[locale]) {
+                if (!confirm(`Locale [${locale}] 已存在，要覆盖吗？`)) return;
+            }
+
+            fullConfigData.mapping[locale] = target;
+            showMappingModal(); // Refresh
+            document.getElementById('newLocaleInput').value = '';
+        }
+
+        function removeMapping(locale) {
+            if (locale === 'default') { alert("不能删除 default 映射！"); return; }
+            if (confirm(`确定删除 ${locale} 的映射吗？`)) {
+                delete fullConfigData.mapping[locale];
+                showMappingModal();
+            }
+        }
+
+        function closeMappingModal() { document.getElementById('mappingModal').style.display = 'none'; }
+        function showWiki() { document.getElementById('wikiModal').style.display = 'block'; }
+        function closeWiki() { document.getElementById('wikiModal').style.display = 'none'; }
+
+        window.onclick = function (event) {
+            const wiki = document.getElementById('wikiModal');
+            const detail = document.getElementById('detailModal');
+            const mapModal = document.getElementById('mappingModal');
+            if (event.target == wiki) wiki.style.display = "none";
+            if (event.target == detail) detail.style.display = "none";
+            if (event.target == mapModal) mapModal.style.display = "none";
+        }
+    </script>
+</body>
+
+</html>
