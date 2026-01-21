@@ -633,21 +633,35 @@
                     localStorage.setItem("cf_worker_url", workerConfig.url);
                     localStorage.setItem("cf_worker_pwd", workerConfig.pwd);
                     alert("设置已保存！能够尝试“从网络加载”和“保存到网络”了。");
+
                 }
             }
         }
 
         async function loadRemoteSeriesConfig() {
-            if (!workerConfig.url) { showOnlineSettings(); if (!workerConfig.url) return; }
+            if (!workerConfig.url) {
+                showOnlineSettings();
+                if (!workerConfig.url) return;
+            }
 
-            const rawUrl = prompt("请输入 Gist Raw URL (用于读取):", localStorage.getItem("gist_raw_url") || "");
-            if (!rawUrl) return;
-            localStorage.setItem("gist_raw_url", rawUrl);
-
+            // Auto-load using Worker (No more Gist Raw URL prompt)
             try {
                 document.getElementById('seriesFileName').textContent = "Downloading...";
-                const resp = await fetch(rawUrl + "?t=" + Date.now());
-                if (!resp.ok) throw new Error("Network Error: " + resp.status);
+                document.getElementById('seriesFileName').style.color = "#e67e22";
+
+                // Use the new GET endpoint on the worker
+                const resp = await fetch(workerConfig.url, {
+                    method: "GET",
+                    headers: {
+                        "X-Auth-Password": workerConfig.pwd, // Still protected
+                        "Accept": "application/json"
+                    }
+                });
+
+                if (!resp.ok) {
+                    const errText = await resp.text();
+                    throw new Error(`Worker Error (${resp.status}): ${errText}`);
+                }
 
                 const raw = await resp.json();
 
@@ -660,11 +674,11 @@
                 } else if (raw.configs && raw.mapping) {
                     fullConfigData = raw;
                 } else {
-                    throw new Error("无法识别的 JSON 结构");
+                    throw new Error("无法识别的 JSON 结构: " + JSON.stringify(raw).substring(0, 50));
                 }
 
                 initConfigKeySelector();
-                document.getElementById('seriesFileName').textContent = "☁️ Remote Gist";
+                document.getElementById('seriesFileName').textContent = "☁️ Remote Gist (Worker)";
                 document.getElementById('seriesFileName').style.color = "#2980b9";
                 document.getElementById('exportBtn').disabled = false;
                 document.getElementById('copyBtn').disabled = false;
@@ -673,8 +687,10 @@
                 alert("远程配置加载成功！");
 
             } catch (err) {
+                console.error(err);
                 alert("加载失败: " + err.message);
                 document.getElementById('seriesFileName').textContent = "(加载失败)";
+                document.getElementById('seriesFileName').style.color = "red";
             }
         }
 
