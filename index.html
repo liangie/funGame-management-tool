@@ -768,6 +768,33 @@
         .dropdown-btn {
             position: relative;
         }
+
+        .dropdown-btn {
+            position: relative;
+        }
+
+        /* Sticky State Styles */
+        .sticky-tools.is-stuck {
+            position: sticky;
+            top: 0;
+            background: rgba(255, 255, 255, 0.95) !important;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1) !important;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 0 !important;
+        }
+
+        /* Hide cards when sticky */
+        .sticky-tools.is-stuck .config-card {
+            display: none;
+        }
+
+        /* Adjust Config Controls when sticky */
+        .sticky-tools.is-stuck #configControls {
+            margin-bottom: 0;
+            border: none;
+            background: transparent;
+            box-shadow: none;
+        }
     </style>
 </head>
 
@@ -779,95 +806,92 @@
     </div>
 
     <div class="container">
-        <div class="container">
-            <div class="sticky-tools"
-                style="background:transparent; border:none; box-shadow:none; padding:0; margin-bottom:10px; position: relative;">
+        <div class="sticky-tools" id="stickyHeader"
+            style="background:transparent; border:none; box-shadow:none; padding:20px 26px; margin-bottom:10px; z-index: 1000; transition: all 0.3s ease;">
 
-                <!-- Card 1: Series Config -->
-                <div class="config-card series">
-                    <div class="card-left">
-                        <h3 class="card-title">Series Config <span class="card-tag-required">(Required)</span></h3>
-                        <div class="file-info-text">
-                            <span class="status-dot" id="seriesStatusDot"></span>
-                            <span id="seriesPathDisplay" title="SeriesCfg 路径">未加载</span>
-                        </div>
+            <!-- Card 1: Series Config -->
+            <div class="config-card series">
+                <div class="card-left">
+                    <h3 class="card-title">Series Config <span class="card-tag-required">(Required)</span></h3>
+                    <div class="file-info-text">
+                        <span class="status-dot" id="seriesStatusDot"></span>
+                        <span id="seriesPathDisplay" title="SeriesCfg 路径">未加载</span>
                     </div>
-                    <div class="card-actions">
-                        <div class="action-row">
-                            <input type="file" id="fileInput" accept=".json" style="display: none;">
-                            <button class="btn-card" onclick="document.getElementById('fileInput').click()">�
-                                本地加载</button>
-                            <button class="btn-card" onclick="loadRemoteSeriesConfig()">☁️ 网络加载</button>
+                </div>
+                <div class="card-actions">
+                    <div class="action-row">
+                        <input type="file" id="fileInput" accept=".json" style="display: none;">
+                        <button class="btn-card" onclick="document.getElementById('fileInput').click()">�
+                            本地加载</button>
+                        <button class="btn-card" onclick="loadRemoteSeriesConfig()">☁️ 网络加载</button>
+                    </div>
+                    <div class="action-row">
+                        <button class="btn-card btn-primary-blue" id="saveRemoteBtn" onclick="saveToRemote()">💾
+                            保存到网络 (Save)</button>
+                        <div class="dropdown-btn">
+                            <button class="btn-card" id="exportBtn" onclick="exportJson()" disabled>📤 导出
+                                JSON</button>
                         </div>
-                        <div class="action-row">
-                            <button class="btn-card btn-primary-blue" id="saveRemoteBtn" onclick="saveToRemote()">💾
-                                保存到网络 (Save)</button>
-                            <div class="dropdown-btn">
-                                <button class="btn-card" id="exportBtn" onclick="exportJson()" disabled>📤 导出
-                                    JSON</button>
-                            </div>
-                            <button class="btn-card" id="copyBtn" onclick="copyJson()" disabled title="Copy JSON">📋
-                                复制</button>
-                        </div>
+                        <button class="btn-card" id="copyBtn" onclick="copyJson()" disabled title="Copy JSON">📋
+                            复制</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 2: Level Config -->
+            <div class="config-card level">
+                <div class="card-left">
+                    <h3 class="card-title">Level Config <span class="card-tag-optional">(Optional)</span></h3>
+                    <div class="file-info-text">
+                        <span class="status-dot" id="levelStatusDot"></span>
+                        <span id="levelPathDisplay" title="LevelCfg 路径">未加载 (使用默认)</span>
+                    </div>
+                </div>
+                <div class="card-actions">
+                    <div class="action-row">
+                        <input type="file" id="levelCfgInput" accept=".json" style="display: none;">
+                        <button class="btn-card" onclick="document.getElementById('levelCfgInput').click()">📂
+                            本地加载</button>
+                        <button class="btn-card" onclick="document.getElementById('levelCfgInput').click()">📂
+                            本地加载</button>
+                        <button class="btn-card" id="btnRemoteLevelLoad" onclick="loadRemoteLevelConfig()">☁️
+                            网络加载</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Configuration Set Controls (V7.14 Redesign) -->
+            <div id="configControls"
+                style="background:#fff3e0; padding:15px; border-radius:8px; margin-bottom:10px; border:1px solid #ffe0b2;">
+
+                <!-- Row 1: Title & Actions -->
+                <div
+                    style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; border-bottom:1px solid #ffcc80; padding-bottom:5px;">
+                    <h3 style="margin:0; color:#e65100; font-size:1.1em;">🔧 配置集管理 (Config Set Manager)</h3>
+                    <div>
+                        <button class="btn btn-outline" onclick="showMappingModal()"
+                            style="border-color:#e65100; color:#e65100; font-size:0.9em; padding:4px 8px;">🌍
+                            地区映射</button>
+                        <button class="btn btn-outline" onclick="showConfigSetModal()"
+                            style="border-color:#8e44ad; color:#8e44ad; font-size:0.9em; padding:4px 8px;">🔨
+                            管理配置集</button>
                     </div>
                 </div>
 
-                <!-- Card 2: Level Config -->
-                <div class="config-card level">
-                    <div class="card-left">
-                        <h3 class="card-title">Level Config <span class="card-tag-optional">(Optional)</span></h3>
-                        <div class="file-info-text">
-                            <span class="status-dot" id="levelStatusDot"></span>
-                            <span id="levelPathDisplay" title="LevelCfg 路径">未加载 (使用默认)</span>
-                        </div>
+                <!-- Row 2: Selectors -->
+                <div style="display:flex; gap:20px;">
+                    <div style="flex:1;">
+                        <label for="configKeySelect"
+                            style="display:block; font-size:0.9em; color:#666; margin-bottom:4px;">当前配置集 (Config
+                            Key):</label>
+                        <select id="configKeySelect" style="width:100%; padding:5px;"
+                            onchange="loadSelectedConfigKey()"></select>
                     </div>
-                    <div class="card-actions">
-                        <div class="action-row">
-                            <input type="file" id="levelCfgInput" accept=".json" style="display: none;">
-                            <button class="btn-card" onclick="document.getElementById('levelCfgInput').click()">📂
-                                本地加载</button>
-                            <button class="btn-card" onclick="document.getElementById('levelCfgInput').click()">📂
-                                本地加载</button>
-                            <button class="btn-card" id="btnRemoteLevelLoad" onclick="loadRemoteLevelConfig()">☁️
-                                网络加载</button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Configuration Set Controls (V7.14 Redesign) -->
-                <div id="configControls"
-                    style="background:#fff3e0; padding:15px; border-radius:8px; margin-bottom:10px; border:1px solid #ffe0b2;">
-
-                    <!-- Row 1: Title & Actions -->
-                    <div
-                        style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; border-bottom:1px solid #ffcc80; padding-bottom:5px;">
-                        <h3 style="margin:0; color:#e65100; font-size:1.1em;">🔧 配置集管理 (Config Set Manager)</h3>
-                        <div>
-                            <button class="btn btn-outline" onclick="showMappingModal()"
-                                style="border-color:#e65100; color:#e65100; font-size:0.9em; padding:4px 8px;">🌍
-                                地区映射</button>
-                            <button class="btn btn-outline" onclick="showConfigSetModal()"
-                                style="border-color:#8e44ad; color:#8e44ad; font-size:0.9em; padding:4px 8px;">🔨
-                                管理配置集</button>
-                        </div>
-                    </div>
-
-                    <!-- Row 2: Selectors -->
-                    <div style="display:flex; gap:20px;">
-                        <div style="flex:1;">
-                            <label for="configKeySelect"
-                                style="display:block; font-size:0.9em; color:#666; margin-bottom:4px;">当前配置集 (Config
-                                Key):</label>
-                            <select id="configKeySelect" style="width:100%; padding:5px;"
-                                onchange="loadSelectedConfigKey()"></select>
-                        </div>
-                        <div style="flex:1;" id="idSelectorContainer">
-                            <label for="idSelect"
-                                style="display:block; font-size:0.9em; color:#666; margin-bottom:4px;">选择配置项 ID (Select
-                                ID):</label>
-                            <select id="idSelect" style="width:100%; padding:5px;"
-                                onchange="loadSelectedSeries()"></select>
-                        </div>
+                    <div style="flex:1;" id="idSelectorContainer">
+                        <label for="idSelect"
+                            style="display:block; font-size:0.9em; color:#666; margin-bottom:4px;">选择配置项 ID (Select
+                            ID):</label>
+                        <select id="idSelect" style="width:100%; padding:5px;" onchange="loadSelectedSeries()"></select>
                     </div>
                 </div>
             </div>
@@ -1056,7 +1080,7 @@
 
         <script>
             // --- Version Control ---
-            const APP_VERSION = "V7.15";
+            const APP_VERSION = "V7.16";
             document.getElementById('appVersion').textContent = APP_VERSION;
 
             // --- Unsaved Changes Protection ---
@@ -1930,6 +1954,29 @@
                 if (event.target == wiki) wiki.style.display = "none";
                 if (event.target == detail) detail.style.display = "none";
                 if (event.target == mapModal) mapModal.style.display = "none";
+            }
+
+            // --- Sticky Header Logic ---
+            const stickySentinel = document.createElement('div');
+            const stickyHeader = document.getElementById('stickyHeader');
+            if (stickyHeader) {
+                // Insert sentinel before the header
+                stickyHeader.parentNode.insertBefore(stickySentinel, stickyHeader);
+
+                const observer = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (!entry.isIntersecting && entry.boundingClientRect.top < 0) {
+                            stickyHeader.classList.add('is-stuck');
+                            stickyHeader.style.position = 'sticky';
+                            stickyHeader.style.top = '0';
+                        } else {
+                            stickyHeader.classList.remove('is-stuck');
+                            stickyHeader.style.position = 'relative';
+                        }
+                    });
+                }, { threshold: [1], rootMargin: '-10px 0px 0px 0px' });
+
+                observer.observe(stickySentinel);
             }
         </script>
 </body>
