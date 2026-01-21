@@ -474,7 +474,7 @@
 
 <body>
 
-    <h1>Series Config Editor <span style="font-size:0.5em; color:#888;">V7</span></h1>
+    <h1>Series Config Editor <span id="appVersion" style="font-size:0.5em; color:#888;"></span></h1>
 
     <div class="container">
         <div class="file-controls">
@@ -684,6 +684,10 @@
     </div>
 
     <script>
+        // --- Version Control ---
+        const APP_VERSION = "V7.2";
+        document.getElementById('appVersion').textContent = APP_VERSION;
+
         // --- Cloudflare Worker Settings ---
         let workerConfig = {
             url: localStorage.getItem("cf_worker_url") || "",
