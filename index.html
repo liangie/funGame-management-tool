@@ -4,7 +4,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Series Config Editor V7 (Level Details)</title>
+    <!-- Prevent Caching -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <title>Series Config Editor (Level Details)</title>
     <style>
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
@@ -688,6 +692,33 @@
         const APP_VERSION = "V7.2";
         document.getElementById('appVersion').textContent = APP_VERSION;
 
+        // --- Unsaved Changes Protection ---
+        let hasUnsavedChanges = false;
+
+        function markUnsaved() {
+            if (!hasUnsavedChanges) {
+                hasUnsavedChanges = true;
+                document.title = "* " + document.title;
+                document.getElementById('saveRemoteBtn').classList.add('pulse-anim'); // Optional visual cue
+            }
+        }
+
+        function markSaved() {
+            hasUnsavedChanges = false;
+            if (document.title.startsWith("* ")) {
+                document.title = document.title.substring(2);
+            }
+            document.getElementById('saveRemoteBtn').classList.remove('pulse-anim');
+        }
+
+        window.addEventListener('beforeunload', function (e) {
+            if (hasUnsavedChanges) {
+                // Standard way to trigger browser prompt
+                e.preventDefault();
+                e.returnValue = '';
+            }
+        });
+
         // --- Cloudflare Worker Settings ---
         let workerConfig = {
             url: localStorage.getItem("cf_worker_url") || "",
@@ -756,6 +787,7 @@
                 document.getElementById('editorArea').style.display = 'block';
 
                 alert("远程配置加载成功！");
+                markSaved();
 
             } catch (err) {
                 console.error(err);
@@ -806,6 +838,7 @@
                 console.log("Save Response:", resJson);
 
                 alert("✅ 保存成功！Gist 已更新。");
+                markSaved();
 
             } catch (err) {
                 alert("❌ 保存失败: " + err.message);
@@ -861,6 +894,7 @@
                     document.getElementById('exportBtn').disabled = false;
                     document.getElementById('copyBtn').disabled = false;
                     document.getElementById('editorArea').style.display = 'block';
+                    markSaved();
 
                 } catch (err) { alert('解析错误: ' + err.message); }
             };
@@ -937,6 +971,7 @@
             initConfigKeySelector(); // Refresh list
             document.getElementById('configKeySelect').value = name;
             loadSelectedConfigKey();
+            markUnsaved();
         }
 
         function duplicateConfigSet() {
@@ -949,6 +984,7 @@
             initConfigKeySelector();
             document.getElementById('configKeySelect').value = name;
             loadSelectedConfigKey();
+            markUnsaved();
         }
 
         function deleteConfigSet() {
@@ -964,6 +1000,7 @@
                     }
                 }
                 initConfigKeySelector();
+                markUnsaved();
             }
         }
 
@@ -1038,6 +1075,7 @@
             const select = document.getElementById('idSelect');
             select.value = jsonData.length - 1;
             loadSelectedSeries();
+            markUnsaved();
         }
 
         function removeSeries() {
@@ -1045,6 +1083,7 @@
             if (confirm(`确定删除 ${jsonData[currentSeriesIndex].ID} 吗？`)) {
                 jsonData.splice(currentSeriesIndex, 1);
                 initSeriesEditor();
+                markUnsaved();
             }
         }
 
@@ -1052,6 +1091,7 @@
             if (currentSeriesIndex === -1) return;
             jsonData[currentSeriesIndex].Order = parseInt(document.getElementById('orderInput').value);
             jsonData[currentSeriesIndex].Img = document.getElementById('imgInput').value;
+            markUnsaved();
         }
 
         function renderLevelsList() {
@@ -1098,12 +1138,14 @@
             if (target >= 0 && target < levels.length) {
                 [levels[idx], levels[target]] = [levels[target], levels[idx]];
                 renderLevelsList();
+                markUnsaved();
             }
         }
         function deleteItem(idx) {
             if (confirm('确定要删除这项吗？')) {
                 jsonData[currentSeriesIndex].Levels.splice(idx, 1);
                 renderLevelsList();
+                markUnsaved();
             }
         }
         function addNewLevel() {
@@ -1114,6 +1156,7 @@
                 renderLevelsList();
                 const c = document.getElementById('levelsList');
                 setTimeout(() => c.scrollTop = c.scrollHeight, 50);
+                markUnsaved();
             }
         }
 
@@ -1169,6 +1212,7 @@
             if (isOverwrite) {
                 jsonData[currentSeriesIndex].Levels = newLevels;
                 alert(`已覆盖！当前列表共 ${newLevels.length} 项。`);
+                markUnsaved();
             } else {
                 const currentLevels = jsonData[currentSeriesIndex].Levels;
                 const newItemsSet = new Set(newLevels);
@@ -1176,6 +1220,7 @@
                 const finalList = [...newLevels, ...remainingOldItems];
                 jsonData[currentSeriesIndex].Levels = finalList;
                 alert(`已合并！`);
+                markUnsaved();
             }
             toggleBulkEdit();
             renderLevelsList();
@@ -1191,9 +1236,14 @@
                 const oldIdx = parseInt(dragSrc.dataset.index);
                 const newIdx = parseInt(this.dataset.index);
                 const levels = jsonData[currentSeriesIndex].Levels;
-                const [item] = levels.splice(oldIdx, 1);
-                levels.splice(newIdx, 0, item);
-                renderLevelsList();
+
+                if (newIdx < 0 || newIdx >= levels.length) return false;
+                if (newIdx !== oldIdx) {
+                    const [item] = levels.splice(oldIdx, 1);
+                    levels.splice(newIdx, 0, item);
+                    renderLevelsList();
+                    markUnsaved();
+                }
             }
             return false;
         }
@@ -1262,12 +1312,15 @@
 
             if (!locale || !target) { alert("请填写完整"); return; }
             if (fullConfigData.mapping[locale]) {
-                if (!confirm(`Locale [${locale}] 已存在，要覆盖吗？`)) return;
+                if (!confirm(`${locale} 已存在 (当前值: ${fullConfigData.mapping[locale]})，确定要覆盖吗？`)) {
+                    return;
+                }
             }
 
             fullConfigData.mapping[locale] = target;
             showMappingModal(); // Refresh
             document.getElementById('newLocaleInput').value = '';
+            markUnsaved();
         }
 
         function removeMapping(locale) {
@@ -1275,6 +1328,7 @@
             if (confirm(`确定删除 ${locale} 的映射吗？`)) {
                 delete fullConfigData.mapping[locale];
                 showMappingModal();
+                markUnsaved();
             }
         }
 
