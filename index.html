@@ -32,23 +32,77 @@
             box-shadow: 0 2px 15px rgba(0, 0, 0, 0.08);
         }
 
-        /* --- Controls Bar --- */
+        /* --- Layout & Sticky Header --- */
+        .sticky-tools {
+            position: -webkit-sticky;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            background-color: white;
+            padding: 15px 20px 5px 20px;
+            margin: -25px -25px 20px -25px;
+            /* Counteract container padding */
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            border-bottom: 1px solid #eee;
+        }
+
         .file-controls {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding-bottom: 20px;
-            border-bottom: 1px solid #eee;
-            margin-bottom: 20px;
+            /* removed padding/border here as sticky container handles it */
             flex-wrap: wrap;
             gap: 10px;
         }
 
-        .left-actions,
-        .right-actions {
+        .header-row-right {
             display: flex;
-            gap: 10px;
+            justify-content: flex-end;
             align-items: center;
+            gap: 10px;
+            margin-bottom: 8px;
+        }
+
+        /* Fixed File Info Panel (Top Left) */
+        .file-info-panel {
+            position: absolute;
+            top: 10px;
+            left: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            font-size: 12px;
+            color: #555;
+            z-index: 10;
+        }
+
+        .path-display {
+            background: rgba(255, 255, 255, 0.8);
+            padding: 2px 6px;
+            border-radius: 4px;
+            border: 1px solid #eee;
+            max-width: 400px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .path-display.active {
+            color: #2c3e50;
+            border-color: #bdc3c7;
+            background: #fdfdfd;
+        }
+
+
+
+        .header-row-center {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 10px;
+            border-top: 1px dashed #eee;
+            padding-top: 10px;
         }
 
         /* --- Form Elements --- */
@@ -96,8 +150,8 @@
         }
 
         .levels-container {
-            max-height: 500px;
-            overflow-y: auto;
+            /* Unlimited Height for Page Scrolling */
+            /* No max-height, no overflow-y */
             margin-bottom: 10px;
             padding-right: 5px;
         }
@@ -205,67 +259,155 @@
 
         /* --- Main Buttons --- */
         .btn {
-            border: none;
-            padding: 9px 18px;
+            border: 1px solid #ccc;
+            padding: 6px 14px;
+            /* Smaller padding */
             border-radius: 4px;
             cursor: pointer;
-            font-size: 14px;
+            font-size: 13px;
+            /* Smaller font */
             font-weight: 500;
-            transition: background 0.2s;
-            color: white;
-            background-color: #3498db;
-            white-space: nowrap;
+            transition: all 0.2s;
+            color: #555;
+            background-color: white;
+            /* Default outline */
         }
 
         .btn:hover {
-            background-color: #2980b9;
+            border-color: #3498db;
+            color: #3498db;
+            background-color: #f0f8ff;
         }
 
         .btn:disabled {
-            background-color: #bdc3c7;
+            border-color: #eee;
+            color: #aaa;
+            background-color: #f9f9f9;
             cursor: not-allowed;
         }
 
-        .btn-config {
-            background-color: #e67e22;
+
+
+        /* --- Primary Remote Buttons (Filled) --- */
+        .btn-remote-load {
+            border: none;
+            background-color: #3498db;
+            color: white;
+            font-weight: bold;
+            font-size: 14px;
+            padding: 8px 24px;
+            box-shadow: 0 2px 5px rgba(52, 152, 219, 0.3);
         }
 
-        .btn-config:hover {
-            background-color: #d35400;
+        .btn-remote-load:hover {
+            background-color: #2980b9;
+            color: white;
+            border-color: transparent;
+            transform: translateY(-1px);
         }
 
-        .btn-success {
-            background-color: #27ae60;
+        .btn-remote-save {
+            border: none;
+            background-color: #e74c3c;
+            color: white;
+            font-weight: bold;
+            font-size: 14px;
+            padding: 8px 24px;
+            box-shadow: 0 2px 5px rgba(231, 76, 60, 0.3);
+            animation: none;
         }
 
-        .btn-success:hover {
-            background-color: #219150;
+        .btn-remote-save:hover {
+            background-color: #c0392b;
+            color: white;
+            border-color: transparent;
+            transform: translateY(-1px);
         }
 
-        .btn-wiki {
-            background-color: #8e44ad;
+
+        /* --- Primary Remote Buttons --- */
+        .btn-remote-load {
+            border: none;
+            background-color: #3498db;
+            color: white;
+            font-weight: bold;
+            font-size: 14px;
+            padding: 8px 24px;
+            box-shadow: 0 2px 5px rgba(52, 152, 219, 0.3);
         }
 
-        .btn-wiki:hover {
-            background-color: #732d91;
+        .btn-remote-load:hover {
+            background-color: #2980b9;
+            color: white;
+            border-color: transparent;
+            transform: translateY(-1px);
         }
 
-        .btn-copy {
-            background-color: #607d8b;
+        .btn-remote-save {
+            border: none;
+            background-color: #e74c3c;
+            color: white;
+            font-weight: bold;
+            font-size: 14px;
+            padding: 8px 24px;
+            box-shadow: 0 2px 5px rgba(231, 76, 60, 0.3);
+            animation: none;
         }
 
-        .btn-copy:hover {
-            background-color: #546e7a;
+        .btn-remote-save:hover {
+            background-color: #c0392b;
+            color: white;
+            border-color: transparent;
+            transform: translateY(-1px);
         }
 
-        .btn-outline {
-            background: white;
-            border: 1px solid #3498db;
-            color: #3498db;
+        /* Pulsing animation for unsaved changes */
+        @keyframes pulse-red {
+            0% {
+                box-shadow: 0 0 0 0 rgba(231, 76, 60, 0.7);
+            }
+
+            70% {
+                box-shadow: 0 0 0 10px rgba(231, 76, 60, 0);
+            }
+
+            100% {
+                box-shadow: 0 0 0 0 rgba(231, 76, 60, 0);
+            }
         }
 
-        .btn-outline:hover {
-            background: #f0f8ff;
+        .btn-remote-save.pulse-anim {
+            animation: pulse-red 2s infinite;
+        }
+
+        .btn-remote-save:hover {
+            background-color: #c0392b;
+            transform: translateY(-1px);
+        }
+
+        /* --- Float Action Button (Back to Top) --- */
+        .fab-top {
+            display: none;
+            /* Hidden by default */
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            z-index: 999;
+            border: none;
+            outline: none;
+            background-color: #34495e;
+            color: white;
+            cursor: pointer;
+            padding: 15px;
+            border-radius: 50%;
+            font-size: 18px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            transition: background-color 0.3s, transform 0.3s;
+        }
+
+        .fab-top:hover {
+            background-color: #2c3e50;
+            transform: scale(1.1);
         }
 
         /* --- Bulk Edit Area --- */
@@ -435,11 +577,21 @@
         .focus-mode .levels-container {
             max-height: none;
             /* Let flex grow handle it */
-            flex: 1;
             margin-bottom: 20px;
             border: 1px solid #ddd;
             padding: 10px;
             border-radius: 6px;
+            /* Fix for scrolling - Consolidate rules here */
+            flex: 1 1 0;
+            /* Force basis to 0 to ensure scrolling */
+            min-height: 0;
+            overflow-y: auto;
+
+            /* Grid Layout */
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 10px;
+            align-content: flex-start;
         }
 
         .focus-mode .levels-header {
@@ -448,13 +600,7 @@
             padding-bottom: 10px;
         }
 
-        /* Compact Grid in Focus Mode */
-        .focus-mode .levels-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 10px;
-            align-content: flex-start;
-        }
+
 
         .focus-mode .level-item {
             margin-bottom: 0;
@@ -473,643 +619,1043 @@
         .focus-mode .focus-header {
             display: flex;
         }
+
+        /* --- V7.11 Card Layout Styles --- */
+        .config-card {
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 1px solid #ddd;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .config-card.series {
+            background-color: #ecf8fe;
+            /* Light Blue */
+            border-color: #bce0f5;
+        }
+
+        .config-card.level {
+            background-color: #f5f5f5;
+            /* Light Gray */
+            border-color: #ddd;
+        }
+
+        .card-left {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .card-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #333;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .card-tag-required {
+            font-size: 12px;
+            color: #c0392b;
+            font-weight: normal;
+            font-style: italic;
+        }
+
+        .card-tag-optional {
+            font-size: 12px;
+            color: #7f8c8d;
+            font-weight: normal;
+            font-style: italic;
+        }
+
+        .file-info-text {
+            color: #555;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background-color: #ccc;
+            display: inline-block;
+        }
+
+        .status-dot.active {
+            background-color: #27ae60;
+        }
+
+        .status-dot.error {
+            background-color: #c0392b;
+        }
+
+        .status-dot.remote {
+            background-color: #27ae60;
+        }
+
+        .card-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            align-items: flex-end;
+        }
+
+        .action-row {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .btn-card {
+            background-color: white;
+            border: 1px solid #dcdcdc;
+            padding: 8px 12px;
+            border-radius: 4px;
+            font-size: 13px;
+            font-weight: 500;
+            color: #333;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+        }
+
+        .btn-card:hover {
+            border-color: #aaa;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-primary-blue {
+            background: #3498db;
+            color: white;
+            border: none;
+            box-shadow: 0 2px 5px rgba(52, 152, 219, 0.4);
+        }
+
+        .btn-primary-blue:hover {
+            background: #2980b9;
+            color: white;
+            box-shadow: 0 4px 8px rgba(52, 152, 219, 0.4);
+            transform: translateY(-1px);
+        }
+
+        .btn-primary-red {
+            background: #e74c3c;
+            color: white;
+            border: none;
+            box-shadow: 0 2px 5px rgba(231, 76, 60, 0.4);
+        }
+
+        .btn-primary-red:hover {
+            background: #c0392b;
+            color: white;
+            transform: translateY(-1px);
+        }
+
+        .dropdown-btn {
+            position: relative;
+        }
     </style>
 </head>
 
 <body>
 
-    <h1>Series Config Editor <span id="appVersion" style="font-size:0.5em; color:#888;"></span></h1>
+    <div style="display:flex; justify-content:space-between; align-items:center;">
+        <h1>Series Config Editor <span id="appVersion" style="font-size:0.5em; color:#888;"></span></h1>
+        <button class="btn btn-outline" onclick="showWiki()" title="Wiki">📖 帮助文档 (Wiki)</button>
+    </div>
 
     <div class="container">
-        <div class="file-controls">
-            <div class="left-actions" style="display:flex; flex-direction:column; align-items:flex-start; gap:8px;">
-                <div style="display:flex; align-items:center; gap:10px;">
-                    <input type="file" id="fileInput" accept=".json" style="display: none;">
-                    <button class="btn" style="width: 220px;" onclick="document.getElementById('fileInput').click()">📂
-                        加载 SeriesCfg</button>
-                    <span id="seriesFileName" style="color:#555; font-weight:bold; font-size:0.9em;">(未加载)</span>
+        <div class="container">
+            <div class="sticky-tools"
+                style="background:transparent; border:none; box-shadow:none; padding:0; margin-bottom:10px; position: relative;">
+
+                <!-- Card 1: Series Config -->
+                <div class="config-card series">
+                    <div class="card-left">
+                        <h3 class="card-title">Series Config <span class="card-tag-required">(Required)</span></h3>
+                        <div class="file-info-text">
+                            <span class="status-dot" id="seriesStatusDot"></span>
+                            <span id="seriesPathDisplay" title="SeriesCfg 路径">未加载</span>
+                        </div>
+                    </div>
+                    <div class="card-actions">
+                        <div class="action-row">
+                            <input type="file" id="fileInput" accept=".json" style="display: none;">
+                            <button class="btn-card" onclick="document.getElementById('fileInput').click()">�
+                                本地加载</button>
+                            <button class="btn-card" onclick="loadRemoteSeriesConfig()">☁️ 网络加载</button>
+                        </div>
+                        <div class="action-row">
+                            <button class="btn-card btn-primary-blue" id="saveRemoteBtn" onclick="saveToRemote()">💾
+                                保存到网络 (Save)</button>
+                            <div class="dropdown-btn">
+                                <button class="btn-card" id="exportBtn" onclick="exportJson()" disabled>📤 导出
+                                    JSON</button>
+                            </div>
+                            <button class="btn-card" id="copyBtn" onclick="copyJson()" disabled title="Copy JSON">📋
+                                复制</button>
+                        </div>
+                    </div>
                 </div>
 
-                <div style="display:flex; align-items:center; gap:10px;">
-                    <input type="file" id="levelCfgInput" accept=".json" style="display: none;">
-                    <button class="btn btn-config" style="width: 220px;"
-                        onclick="document.getElementById('levelCfgInput').click()">📂 加载详情配置 (LevelCfg)</button>
-                    <span id="configLoadedMsg" class="config-loaded-indicator" style="display:none; color:#27ae60;">✓
-                        详情已关联</span>
-                    <span id="levelFileName" style="color:#555; font-size:0.9em;"></span>
+                <!-- Card 2: Level Config -->
+                <div class="config-card level">
+                    <div class="card-left">
+                        <h3 class="card-title">Level Config <span class="card-tag-optional">(Optional)</span></h3>
+                        <div class="file-info-text">
+                            <span class="status-dot" id="levelStatusDot"></span>
+                            <span id="levelPathDisplay" title="LevelCfg 路径">未加载 (使用默认)</span>
+                        </div>
+                    </div>
+                    <div class="card-actions">
+                        <div class="action-row">
+                            <input type="file" id="levelCfgInput" accept=".json" style="display: none;">
+                            <button class="btn-card" onclick="document.getElementById('levelCfgInput').click()">📂
+                                本地加载</button>
+                            <button class="btn-card" onclick="document.getElementById('levelCfgInput').click()">📂
+                                本地加载</button>
+                            <button class="btn-card" id="btnRemoteLevelLoad" onclick="loadRemoteLevelConfig()">☁️
+                                网络加载</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Configuration Set Controls (V7.14 Redesign) -->
+                <div id="configControls"
+                    style="background:#fff3e0; padding:15px; border-radius:8px; margin-bottom:10px; border:1px solid #ffe0b2;">
+
+                    <!-- Row 1: Title & Actions -->
+                    <div
+                        style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; border-bottom:1px solid #ffcc80; padding-bottom:5px;">
+                        <h3 style="margin:0; color:#e65100; font-size:1.1em;">🔧 配置集管理 (Config Set Manager)</h3>
+                        <div>
+                            <button class="btn btn-outline" onclick="showMappingModal()"
+                                style="border-color:#e65100; color:#e65100; font-size:0.9em; padding:4px 8px;">🌍
+                                地区映射</button>
+                            <button class="btn btn-outline" onclick="showConfigSetModal()"
+                                style="border-color:#8e44ad; color:#8e44ad; font-size:0.9em; padding:4px 8px;">🔨
+                                管理配置集</button>
+                        </div>
+                    </div>
+
+                    <!-- Row 2: Selectors -->
+                    <div style="display:flex; gap:20px;">
+                        <div style="flex:1;">
+                            <label for="configKeySelect"
+                                style="display:block; font-size:0.9em; color:#666; margin-bottom:4px;">当前配置集 (Config
+                                Key):</label>
+                            <select id="configKeySelect" style="width:100%; padding:5px;"
+                                onchange="loadSelectedConfigKey()"></select>
+                        </div>
+                        <div style="flex:1;" id="idSelectorContainer">
+                            <label for="idSelect"
+                                style="display:block; font-size:0.9em; color:#666; margin-bottom:4px;">选择配置项 ID (Select
+                                ID):</label>
+                            <select id="idSelect" style="width:100%; padding:5px;"
+                                onchange="loadSelectedSeries()"></select>
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            <div class="right-actions" style="align-self: flex-start;">
-                <button class="btn btn-outline" onclick="showOnlineSettings()"
-                    title="设置 Worker URL & Password">⚙️</button>
-                <button class="btn btn-outline" onclick="loadRemoteSeriesConfig()">☁️ Load Remote</button>
-                <button class="btn btn-danger" id="saveRemoteBtn" onclick="saveToRemote()">🚀 Save Remote</button>
-                <div style="height:20px; border-left:1px solid #ccc; margin:0 5px;"></div>
-                <button class="btn btn-wiki" onclick="showWiki()">📖 教程</button>
-                <button class="btn btn-copy" id="copyBtn" onclick="copyJson()" disabled>📋 Copy JSON</button>
-                <button class="btn btn-success" id="exportBtn" onclick="exportJson()" disabled>💾 Export JSON</button>
-            </div>
-        </div>
+            <div id="editorArea" class="editor-area">
 
-        <!-- NEW: Config Set Controls -->
-        <div id="configControls"
-            style="background:#fff3e0; padding:15px; border-radius:6px; margin-bottom:20px; border:1px solid #ffe0b2; display:flex; align-items:center; gap:15px;">
-            <div style="flex:1;">
-                <label for="configKeySelect" style="display:inline-block; margin-right:10px; color:#e65100;">🔧 当前配置集
-                    (Current Config Set):</label>
-                <select id="configKeySelect" style="width:auto; min-width:200px; display:inline-block;"
-                    onchange="loadSelectedConfigKey()"></select>
-            </div>
 
-            <button class="btn btn-outline" onclick="showMappingModal()" style="border-color:#e65100; color:#e65100;">🌍
-                地区映射 (Mapping)</button>
-            <div style="height:20px; border-left:1px solid #ccc; margin:0 5px;"></div>
-            <button class="btn btn-outline" onclick="addNewConfigSet()" title="新建空配置集">Math.Empty</button>
-            <button class="btn btn-outline" onclick="duplicateConfigSet()" title="复制当前配置集">Math.Copy</button>
-            <button class="btn btn-outline" onclick="deleteConfigSet()"
-                style="color:#c0392b; border-color:#c0392b;">Math.Delete</button>
-        </div>
 
-        <div id="editorArea" class="editor-area">
-
-            <div class="form-group">
-                <label for="idSelect">选择 ID (Select Series ID):</label>
-                <select id="idSelect" onchange="loadSelectedSeries()"></select>
-            </div>
-
-            <div style="display: flex; gap: 20px;">
-                <div class="form-group" style="flex: 1;">
-                    <label>Order (排序):</label>
-                    <input type="number" id="orderInput" onchange="updateCurrentData()">
+                <div style="display: flex; gap: 20px;">
+                    <div class="form-group" style="flex: 1;">
+                        <label>Order (排序):</label>
+                        <input type="number" id="orderInput" onchange="updateCurrentData()">
+                    </div>
+                    <div class="form-group" style="flex: 2;">
+                        <label>Img (图片名):</label>
+                        <input type="text" id="imgInput" onchange="updateCurrentData()">
+                    </div>
                 </div>
-                <div class="form-group" style="flex: 2;">
-                    <label>Img (图片名):</label>
-                    <input type="text" id="imgInput" onchange="updateCurrentData()">
-                </div>
-            </div>
 
-            <div class="form-group">
-                <div class="levels-header">
-                    <label style="margin:0; font-size:1.1em;">Levels 列表配置:</label>
-                    <div>
-                        <button class="btn btn-outline" onclick="toggleFocusMode()" title="全屏专注模式">⛶ Focus Mode</button>
+                <div class="form-group">
+                    <div class="levels-header">
+                        <label style="margin:0; font-size:1.1em;">Levels 列表配置:</label>
                         <button class="btn btn-outline" onclick="toggleBulkEdit()">✎ 批量编辑 / 导入 (Bulk Edit)</button>
                     </div>
-                </div>
 
-                <div id="normalView" class="levels-wrapper">
-                    <!-- Header purely for Focus Mode -->
-                    <div class="focus-header">
-                        <span style="font-size:1.2em; font-weight:bold; color:#2c3e50;">⛶ Focus Mode (Editing)</span>
-                        <button class="btn btn-outline" onclick="toggleFocusMode()">✕ Exit Focus</button>
+                    <div id="normalView" class="levels-wrapper">
+                        <div id="levelsList" class="levels-container"></div>
+                        <button class="btn"
+                            style="width:100%; background:#fff; border:2px dashed #ddd; color:#666; margin-top:5px;"
+                            onclick="addNewLevel()">+ 新增一项 (Add Level)</button>
                     </div>
 
-                    <div id="levelsList" class="levels-container"></div>
-                    <button class="btn"
-                        style="width:100%; background:#fff; border:2px dashed #ddd; color:#666; margin-top:5px;"
-                        onclick="addNewLevel()">+ 新增一项 (Add Level)</button>
-                </div>
+                    <div id="bulkView" class="bulk-edit-area">
+                        <div style="margin-bottom:8px; color:#555;">请在下方粘贴新的 Levels ID 列表（支持逗号分隔或换行）：</div>
 
-                <div id="bulkView" class="bulk-edit-area">
-                    <div style="margin-bottom:8px; color:#555;">请在下方粘贴新的 Levels ID 列表（支持逗号分隔或换行）：</div>
+                        <textarea id="bulkTextarea" placeholder="例如: s200, s201, s202..."></textarea>
 
-                    <textarea id="bulkTextarea" placeholder="例如: s200, s201, s202..."></textarea>
+                        <div class="checkbox-wrapper">
+                            <input type="checkbox" id="overwriteCheckbox">
+                            <label for="overwriteCheckbox">
+                                <strong>覆盖现有列表 (Overwrite Mode)</strong>
+                                <span class="checkbox-note">
+                                    🔲 <strong>不选中 (推荐)</strong>:
+                                    新粘贴的数据会排在<strong>最前面</strong>，旧列表中剩余的数据会自动跟在后面（不丢失数据）。<br>
+                                    ✅ <strong>选中</strong>: <strong>完全删除</strong>旧列表，只保留上方文本框中的内容。
+                                </span>
+                            </label>
+                        </div>
 
-                    <div class="checkbox-wrapper">
-                        <input type="checkbox" id="overwriteCheckbox">
-                        <label for="overwriteCheckbox">
-                            <strong>覆盖现有列表 (Overwrite Mode)</strong>
-                            <span class="checkbox-note">
-                                🔲 <strong>不选中 (推荐)</strong>: 新粘贴的数据会排在<strong>最前面</strong>，旧列表中剩余的数据会自动跟在后面（不丢失数据）。<br>
-                                ✅ <strong>选中</strong>: <strong>完全删除</strong>旧列表，只保留上方文本框中的内容。
-                            </span>
-                        </label>
-                    </div>
-
-                    <div class="bulk-actions">
-                        <button class="btn btn-outline" style="margin-right:auto;"
-                            onclick="copyCurrentToBulk()">加载当前列表</button>
-                        <button class="btn" onclick="toggleBulkEdit()">取消</button>
-                        <button class="btn btn-success" onclick="applyBulkChanges()">应用修改</button>
+                        <div class="bulk-actions">
+                            <button class="btn btn-outline" style="margin-right:auto;"
+                                onclick="copyCurrentToBulk()">加载当前列表</button>
+                            <button class="btn" onclick="toggleBulkEdit()">取消</button>
+                            <button class="btn btn-success" onclick="applyBulkChanges()">应用修改</button>
+                        </div>
                     </div>
                 </div>
-            </div>
 
-        </div>
-    </div>
-
-    <div id="wikiModal" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="closeWiki()">&times;</span>
-            <h2 style="margin-top:0; color:#2c3e50; border-bottom:1px solid #ddd; padding-bottom:15px;">📖 工具使用教程 (Wiki)
-            </h2>
-
-            <div class="wiki-section">
-                <h3>1. 基础操作</h3>
-                <ul>
-                    <li>点击左上角的 <span class="wiki-tag">📂 加载 SeriesCfg</span> 加载主数据文件。</li>
-                    <li><strong>(新)</strong> 点击 <span class="wiki-tag" style="color:#d35400;">📂 加载详情配置</span> 上传
-                        <code>LevelCfg.json</code>。成功后，列表会自动显示游戏名称，并提供详情查看功能。
-                    </li>
-                    <li>在下拉菜单中切换不同的 Series ID (xl1, xl2...) 进行编辑。</li>
-                </ul>
-            </div>
-
-            <div class="wiki-section">
-                <h3>2. Levels 列表与详情</h3>
-                <ul>
-                    <li><strong>排序</strong>：支持鼠标拖拽或点击右侧箭头。</li>
-                    <li><strong>查看详情</strong>：如果加载了配置，点击列表项右侧的 <span class="wiki-tag">ℹ️</span> 图标，可查看该关卡的完整 JSON
-                        信息（Path, Stages, Rule 等）。</li>
-                </ul>
-            </div>
-
-            <div class="wiki-section">
-                <h3>3. 批量编辑 (Bulk Edit)</h3>
-                <ul>
-                    <li>支持从 Excel 或文本中粘贴 ID 列表。</li>
-                    <li><strong>智能合并</strong>：默认将新 ID 置顶，旧 ID 顺延。</li>
-                    <li><strong>覆盖模式</strong>：勾选 Checkbox 后，完全替换现有列表。</li>
-                </ul>
-            </div>
-
-            <div style="text-align: right;">
-                <button class="btn" onclick="closeWiki()">我明白了</button>
             </div>
         </div>
-    </div>
 
-    <div id="detailModal" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="closeDetailModal()">&times;</span>
-            <h2 id="detailTitle" style="margin-top:0; color:#2c3e50; padding-bottom:10px;">关卡详情</h2>
-            <pre id="detailContent" class="json-display"></pre>
-            <div style="text-align: right; margin-top:15px;">
-                <button class="btn" onclick="closeDetailModal()">关闭</button>
-            </div>
-        </div>
-    </div>
+        <div id="wikiModal" class="modal">
+            <div class="modal-content">
+                <span class="close" onclick="closeWiki()">&times;</span>
+                <h2 style="margin-top:0; color:#2c3e50; border-bottom:1px solid #ddd; padding-bottom:15px;">📖 工具使用教程
+                    (Wiki)
+                </h2>
 
-    <div id="mappingModal" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="closeMappingModal()">&times;</span>
-            <h2 style="margin-top:0; color:#2c3e50;">🌍 地区映射管理 (Locale Mapping)</h2>
-            <p style="color:#666; margin-bottom:15px;">设置不同地区 (Locale) 使用哪套配置 (Config Key)。例如 US -> base_us。</p>
+                <div class="wiki-section">
+                    <h3>1. 基础操作</h3>
+                    <ul>
+                        <li>点击左上角的 <span class="wiki-tag">📂加载本地 SeriesCfg</span> 加载主数据文件。</li>
+                        <li><strong>(新)</strong> 点击 <span class="wiki-tag" style="color:#d35400;">📂加载本地 LevelCfg</span>
+                            上传
+                            <code>LevelCfg.json</code>。成功后，列表会自动显示游戏名称，并提供详情查看功能。
+                        </li>
+                        <li>在下拉菜单中切换不同的 Series ID (xl1, xl2...) 进行编辑。</li>
+                    </ul>
+                </div>
 
-            <div style="margin-bottom: 20px;">
-                <table style="width:100%; border-collapse: collapse;">
-                    <thead>
-                        <tr style="background:#f4f6f8; text-align:left;">
-                            <th style="padding:10px; border-bottom:2px solid #ddd;">地区 (Locale)</th>
-                            <th style="padding:10px; border-bottom:2px solid #ddd;">指向的配置集 (Config Key)</th>
-                            <th style="padding:10px; border-bottom:2px solid #ddd;">操作</th>
-                        </tr>
-                    </thead>
-                    <tbody id="mappingTableBody">
-                        <!-- Mapping rows go here -->
-                    </tbody>
-                </table>
-            </div>
+                <div class="wiki-section">
+                    <h3>2. Levels 列表与详情</h3>
+                    <ul>
+                        <li><strong>排序</strong>：支持鼠标拖拽或点击右侧箭头。</li>
+                        <li><strong>查看详情</strong>：如果加载了配置，点击列表项右侧的 <span class="wiki-tag">ℹ️</span> 图标，可查看该关卡的完整 JSON
+                            信息（Path, Stages, Rule 等）。</li>
+                    </ul>
+                </div>
 
-            <div style="background:#fafafa; padding:15px; border-radius:6px; border:1px dashed #ddd;">
-                <strong>新增映射:</strong>
-                <div style="display:flex; gap:10px; margin-top:10px;">
-                    <input type="text" id="newLocaleInput" placeholder="Locale (e.g. CN, KR)" style="flex:1;">
-                    <select id="newMapKeySelect" style="flex:1;"></select>
-                    <button class="btn btn-success" onclick="addNewMapping()">+ 添加</button>
+                <div class="wiki-section">
+                    <h3>3. 批量编辑 (Bulk Edit)</h3>
+                    <ul>
+                        <li>支持从 Excel 或文本中粘贴 ID 列表。</li>
+                        <li><strong>智能合并</strong>：默认将新 ID 置顶，旧 ID 顺延。</li>
+                        <li><strong>覆盖模式</strong>：勾选 Checkbox 后，完全替换现有列表。</li>
+                    </ul>
+                </div>
+
+                <div style="text-align: right;">
+                    <button class="btn" onclick="closeWiki()">我明白了</button>
                 </div>
             </div>
+        </div>
 
-            <div style="text-align: right; margin-top:20px;">
-                <button class="btn" onclick="closeMappingModal()">关闭</button>
+        <div id="detailModal" class="modal">
+            <div class="modal-content">
+                <span class="close" onclick="closeDetailModal()">&times;</span>
+                <h2 id="detailTitle" style="margin-top:0; color:#2c3e50; padding-bottom:10px;">关卡详情</h2>
+                <pre id="detailContent" class="json-display"></pre>
+                <div style="text-align: right; margin-top:15px;">
+                    <button class="btn" onclick="closeDetailModal()">关闭</button>
+                </div>
             </div>
         </div>
-    </div>
 
-    <script>
-        // --- Version Control ---
-        const APP_VERSION = "V7.2";
-        document.getElementById('appVersion').textContent = APP_VERSION;
+        <div id="mappingModal" class="modal">
+            <div class="modal-content">
+                <span class="close" onclick="closeMappingModal()">&times;</span>
+                <h2 style="margin-top:0; color:#2c3e50;">🌍 地区映射管理 (Locale Mapping)</h2>
+                <p style="color:#666; margin-bottom:15px;">设置不同地区 (Locale) 使用哪套配置 (Config Key)。例如 US -> base_us。</p>
 
-        // --- Unsaved Changes Protection ---
-        let hasUnsavedChanges = false;
+                <div style="margin-bottom: 20px;">
+                    <table style="width:100%; border-collapse: collapse;">
+                        <thead>
+                            <tr style="background:#f4f6f8; text-align:left;">
+                                <th style="padding:10px; border-bottom:2px solid #ddd;">地区 (Locale)</th>
+                                <th style="padding:10px; border-bottom:2px solid #ddd;">指向的配置集 (Config Key)</th>
+                                <th style="padding:10px; border-bottom:2px solid #ddd;">操作</th>
+                            </tr>
+                        </thead>
+                        <tbody id="mappingTableBody">
+                            <!-- Mapping rows go here -->
+                        </tbody>
+                    </table>
+                </div>
 
-        function markUnsaved() {
-            if (!hasUnsavedChanges) {
-                hasUnsavedChanges = true;
-                document.title = "* " + document.title;
-                document.getElementById('saveRemoteBtn').classList.add('pulse-anim'); // Optional visual cue
-            }
-        }
+                <div style="background:#fafafa; padding:15px; border-radius:6px; border:1px dashed #ddd;">
+                    <strong>新增映射:</strong>
+                    <div style="display:flex; gap:10px; margin-top:10px;">
+                        <input type="text" id="newLocaleInput" placeholder="Locale (e.g. CN, KR)" style="flex:1;">
+                        <select id="newMapKeySelect" style="flex:1;"></select>
+                        <button class="btn btn-success" onclick="addNewMapping()">+ 添加</button>
+                    </div>
+                </div>
 
-        function markSaved() {
-            hasUnsavedChanges = false;
-            if (document.title.startsWith("* ")) {
-                document.title = document.title.substring(2);
-            }
-            document.getElementById('saveRemoteBtn').classList.remove('pulse-anim');
-        }
+                <div style="text-align: right; margin-top:20px;">
+                    <button class="btn" onclick="closeMappingModal()">关闭</button>
+                </div>
+            </div>
+        </div>
 
-        window.addEventListener('beforeunload', function (e) {
-            if (hasUnsavedChanges) {
-                // Standard way to trigger browser prompt
-                e.preventDefault();
-                e.returnValue = '';
-            }
-        });
+        <div id="configSetModal" class="modal">
+            <div class="modal-content">
+                <span class="close" onclick="closeConfigSetModal()">&times;</span>
+                <h2 style="margin-top:0; color:#2c3e50;">🔧 配置集管理 (Config Sets)</h2>
+                <p style="color:#666; margin-bottom:15px;">新建、复制或重命名配置集。重命名会自动更新关联的映射。</p>
 
-        // --- Cloudflare Worker Settings ---
-        let workerConfig = {
-            url: localStorage.getItem("cf_worker_url") || "",
-            pwd: localStorage.getItem("cf_worker_pwd") || ""
-        };
+                <div style="margin-bottom: 20px;">
+                    <table style="width:100%; border-collapse: collapse;">
+                        <thead>
+                            <tr style="background:#f4f6f8; text-align:left;">
+                                <th style="padding:10px; border-bottom:2px solid #ddd;">配置集名称 (Key)</th>
+                                <th style="padding:10px; border-bottom:2px solid #ddd;">包含 Series 数量</th>
+                                <th style="padding:10px; border-bottom:2px solid #ddd;">操作</th>
+                            </tr>
+                        </thead>
+                        <tbody id="configSetTableBody">
+                            <!-- Rows -->
+                        </tbody>
+                    </table>
+                </div>
 
-        function showOnlineSettings() {
-            const url = prompt("请输入 Cloudflare Worker URL (e.g. https://your-worker.workers.dev):", workerConfig.url);
-            if (url !== null) {
-                const pwd = prompt("请输入访问密码 (Access Password):", workerConfig.pwd);
-                if (pwd !== null) {
-                    workerConfig.url = url.trim();
-                    workerConfig.pwd = pwd.trim();
-                    localStorage.setItem("cf_worker_url", workerConfig.url);
-                    localStorage.setItem("cf_worker_pwd", workerConfig.pwd);
-                    alert("设置已保存！能够尝试“从网络加载”和“保存到网络”了。");
+                <div
+                    style="background:#fafafa; padding:15px; border-radius:6px; border:1px dashed #ddd; display:flex; gap:10px;">
+                    <button class="btn btn-outline" onclick="addNewConfigSet(true)">+ 新建空配置 (Empty)</button>
+                    <button class="btn btn-outline" onclick="duplicateConfigSet(true)">+ 复制当前均 (Copy Current)</button>
+                </div>
 
+                <div style="text-align: right; margin-top:20px;">
+                    <button class="btn" onclick="closeConfigSetModal()">关闭</button>
+                </div>
+            </div>
+        </div>
+
+        <button onclick="scrollToTop()" id="backToTopBtn" class="fab-top" title="回到顶部">⬆️</button>
+
+        <script>
+            // --- Version Control ---
+            const APP_VERSION = "V7.15";
+            document.getElementById('appVersion').textContent = APP_VERSION;
+
+            // --- Unsaved Changes Protection ---
+            let hasUnsavedChanges = false;
+
+            function markUnsaved() {
+                if (!hasUnsavedChanges) {
+                    hasUnsavedChanges = true;
+                    document.title = "* " + document.title;
+                    document.getElementById('saveRemoteBtn').classList.add('pulse-anim'); // Optional visual cue
                 }
             }
-        }
 
-        async function loadRemoteSeriesConfig() {
-            if (!workerConfig.url) {
-                showOnlineSettings();
-                if (!workerConfig.url) return;
+            function markSaved() {
+                hasUnsavedChanges = false;
+                if (document.title.startsWith("* ")) {
+                    document.title = document.title.substring(2);
+                }
+                document.getElementById('saveRemoteBtn').classList.remove('pulse-anim');
             }
 
-            // Auto-load using Worker (No more Gist Raw URL prompt)
-            try {
-                document.getElementById('seriesFileName').textContent = "Downloading...";
-                document.getElementById('seriesFileName').style.color = "#e67e22";
+            window.addEventListener('beforeunload', function (e) {
+                if (hasUnsavedChanges) {
+                    // Standard way to trigger browser prompt
+                    e.preventDefault();
+                    e.returnValue = '';
+                }
+            });
 
-                // Use the new GET endpoint on the worker
-                const resp = await fetch(workerConfig.url, {
-                    method: "GET",
-                    headers: {
-                        "X-Auth-Password": workerConfig.pwd, // Still protected
-                        "Accept": "application/json"
+            // --- Cloudflare Worker Settings ---
+            let workerConfig = {
+                url: localStorage.getItem("cf_worker_url") || "",
+                pwd: localStorage.getItem("cf_worker_pwd") || ""
+            };
+
+            function showOnlineSettings() {
+                const url = prompt("请输入 Cloudflare Worker URL (e.g. https://your-worker.workers.dev):", workerConfig.url);
+                if (url !== null) {
+                    const pwd = prompt("请输入访问密码 (Access Password):", workerConfig.pwd);
+                    if (pwd !== null) {
+                        workerConfig.url = url.trim();
+                        workerConfig.pwd = pwd.trim();
+                        localStorage.setItem("cf_worker_url", workerConfig.url);
+                        localStorage.setItem("cf_worker_pwd", workerConfig.pwd);
+                        alert("设置已保存！能够尝试“从网络加载”和“保存到网络”了。");
+
                     }
-                });
-
-                if (!resp.ok) {
-                    const errText = await resp.text();
-                    throw new Error(`Worker Error (${resp.status}): ${errText}`);
                 }
-
-                const raw = await resp.json();
-
-                // Same parsing logic as file input
-                if (Array.isArray(raw)) {
-                    fullConfigData = {
-                        configs: { "base_global": raw },
-                        mapping: { "default": "base_global" }
-                    };
-                } else if (raw.configs && raw.mapping) {
-                    fullConfigData = raw;
-                } else {
-                    throw new Error("无法识别的 JSON 结构: " + JSON.stringify(raw).substring(0, 50));
-                }
-
-                initConfigKeySelector();
-                document.getElementById('seriesFileName').textContent = "☁️ Remote Gist (Worker)";
-                document.getElementById('seriesFileName').style.color = "#2980b9";
-                document.getElementById('exportBtn').disabled = false;
-                document.getElementById('copyBtn').disabled = false;
-                document.getElementById('editorArea').style.display = 'block';
-
-                alert("远程配置加载成功！");
-                markSaved();
-
-            } catch (err) {
-                console.error(err);
-                alert("加载失败: " + err.message);
-                document.getElementById('seriesFileName').textContent = "(加载失败)";
-                document.getElementById('seriesFileName').style.color = "red";
-            }
-        }
-
-        async function saveToRemote() {
-            if (!workerConfig.url || !workerConfig.pwd) {
-                showOnlineSettings();
-                if (!workerConfig.url || !workerConfig.pwd) return;
             }
 
-            if (!confirm("⚠️ 确定要保存修改到远程 Gist 吗？这将直接影响线上配置！")) return;
-
-            const btn = document.getElementById('saveRemoteBtn');
-            const originalText = btn.textContent;
-            btn.textContent = "Saving...";
-            btn.disabled = true;
-
-            try {
-                // Construct the Gist payload
-                const payload = {
-                    files: {
-                        "SeriesLocaleCfg.json": {
-                            content: JSON.stringify(fullConfigData, null, 2)
-                        }
-                    }
-                };
-
-                const resp = await fetch(workerConfig.url, {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                        "X-Auth-Password": workerConfig.pwd
-                    },
-                    body: JSON.stringify(payload)
-                });
-
-                if (!resp.ok) {
-                    const errText = await resp.text();
-                    throw new Error(`Server Error (${resp.status}): ${errText}`);
+            async function loadRemoteSeriesConfig() {
+                if (!workerConfig.url) {
+                    showOnlineSettings();
+                    if (!workerConfig.url) return;
                 }
 
-                const resJson = await resp.json();
-                console.log("Save Response:", resJson);
+                // Auto-load using Worker (No more Gist Raw URL prompt)
+                const btnLevelRemote = document.getElementById('btnRemoteLevelLoad');
+                const btnLevelLocal = document.querySelector("#levelCfgInput + button");
 
-                alert("✅ 保存成功！Gist 已更新。");
-                markSaved();
-
-            } catch (err) {
-                alert("❌ 保存失败: " + err.message);
-            } finally {
-                btn.textContent = originalText;
-                btn.disabled = false;
-            }
-        }
-
-        // Data Structure:
-        // fullConfigData = { 
-        //    configs: { "base_global": [...], "base_us": [...] }, 
-        //    mapping: { "default": "base_global", "US": "base_us" } 
-        // }
-        let fullConfigData = { configs: {}, mapping: {} };
-
-        // Current Context
-        let currentConfigKey = "";
-        let jsonData = []; // Points to fullConfigData.configs[currentConfigKey]
-
-        let levelConfigMap = {};
-        let currentSeriesIndex = -1;
-
-        // --- File Loading: SeriesCfg ---
-        document.getElementById('fileInput').addEventListener('change', function (event) {
-            const file = event.target.files[0];
-            if (!file) return;
-            const reader = new FileReader();
-            reader.onload = function (e) {
                 try {
-                    const raw = JSON.parse(e.target.result);
+                    // Lock Level Buttons Immediately
+                    if (btnLevelRemote) btnLevelRemote.disabled = true;
+                    if (btnLevelLocal) btnLevelLocal.disabled = true;
 
-                    // 1. Data Migration / Detection
+                    const infoEl = document.getElementById('seriesPathDisplay');
+                    infoEl.textContent = "SeriesCfg: [Downloading...]";
+                    document.getElementById('seriesStatusDot').className = 'status-dot';
+
+                    // Use the new GET endpoint on the worker
+                    const resp = await fetch(workerConfig.url, {
+                        method: "GET",
+                        headers: {
+                            "X-Auth-Password": workerConfig.pwd, // Still protected
+                            "Accept": "application/json"
+                        }
+                    });
+
+                    if (!resp.ok) {
+                        const errText = await resp.text();
+                        throw new Error(`Worker Error (${resp.status}): ${errText}`);
+                    }
+
+                    const raw = await resp.json();
+
+                    // Same parsing logic as file input
                     if (Array.isArray(raw)) {
-                        // Legacy Array Format -> Convert to New Structure
                         fullConfigData = {
                             configs: { "base_global": raw },
                             mapping: { "default": "base_global" }
                         };
-                        alert("⚠️ 检测到旧版格式，已自动转换为新版结构 (base_global)。");
                     } else if (raw.configs && raw.mapping) {
-                        // New Format
                         fullConfigData = raw;
                     } else {
-                        throw new Error("无法识别的 JSON 结构");
+                        throw new Error("无法识别的 JSON 结构: " + JSON.stringify(raw).substring(0, 50));
                     }
 
-                    // 2. Initialize UI
+
                     initConfigKeySelector();
-                    document.getElementById('seriesFileName').textContent = file.name;
-                    document.getElementById('seriesFileName').style.color = "#27ae60";
+
+                    // Update New File Info Display
+                    const displayEl = document.getElementById('seriesPathDisplay');
+                    displayEl.textContent = "[Remote] Gist (Worker)"; // Match mockup-ish
+                    displayEl.title = "已加载远程配置";
+                    document.getElementById('seriesStatusDot').className = 'status-dot active remote';
 
                     document.getElementById('exportBtn').disabled = false;
                     document.getElementById('copyBtn').disabled = false;
                     document.getElementById('editorArea').style.display = 'block';
+                    document.getElementById('idSelectorContainer').style.display = 'block';
+
+                    alert("远程配置 SeriesCfg 加载成功！正在尝试加载 LevelCfg...");
                     markSaved();
 
-                } catch (err) { alert('解析错误: ' + err.message); }
-            };
-            reader.readAsText(file);
-        });
+                    // Chain Load
+                    loadRemoteLevelConfig();
 
-        // --- File Loading: LevelCfg ---
-        document.getElementById('levelCfgInput').addEventListener('change', function (event) {
-            const file = event.target.files[0];
-            if (!file) return;
-            const reader = new FileReader();
-            reader.onload = function (e) {
-                try {
-                    const cfgData = JSON.parse(e.target.result);
-                    levelConfigMap = {};
-                    cfgData.forEach(item => { if (item.ID) levelConfigMap[item.ID] = item; });
 
-                    document.getElementById('configLoadedMsg').style.display = "inline";
-                    document.getElementById('levelFileName').textContent = file.name;
-                    document.getElementById('levelFileName').style.color = "#27ae60";
-                    if (currentSeriesIndex !== -1) renderLevelsList();
-                    alert(`成功加载详情配置！包含 ${cfgData.length} 个关卡数据。`);
-                } catch (err) { alert('LevelCfg 解析错误: ' + err.message); }
-            };
-            reader.readAsText(file);
-        });
+                } catch (err) {
+                    console.error(err);
+                    alert("加载失败: " + err.message);
+                    const displayEl = document.getElementById('seriesPathDisplay');
+                    displayEl.textContent = "SeriesCfg: (加载失败)";
+                    displayEl.style.color = "red";
+                    document.getElementById('seriesStatusDot').className = 'status-dot error';
 
-        // --- Config Key Management ---
-        function initConfigKeySelector() {
-            // 1. Populate Config Key Select
-            const keySelect = document.getElementById('configKeySelect');
-            keySelect.innerHTML = '';
-
-            const keys = Object.keys(fullConfigData.configs);
-            if (keys.length === 0) {
-                // Should not happen if migrated correctly, but safe guard
-                fullConfigData.configs["base_global"] = [];
-                keys.push("base_global");
+                    // Unlock Level Buttons on Series Error (since Chain won't happen)
+                    if (btnLevelRemote) btnLevelRemote.disabled = false;
+                    if (btnLevelLocal) btnLevelLocal.disabled = false;
+                }
             }
 
-            keys.forEach(k => {
-                const opt = document.createElement('option');
-                opt.value = k; opt.text = k;
-                keySelect.appendChild(opt);
+            async function loadRemoteLevelConfig() {
+                if (!workerConfig.url || !workerConfig.pwd) return;
+
+                const btn = document.getElementById('btnRemoteLevelLoad');
+                const infoEl = document.getElementById('levelPathDisplay');
+                const statusDot = document.getElementById('levelStatusDot');
+
+                try {
+                    // Locks
+                    const otherBtn = document.querySelector("#levelCfgInput + button"); // Local Load Btn
+                    btn.disabled = true;
+                    btn.textContent = "Loading...";
+                    if (otherBtn) otherBtn.disabled = true;
+
+                    infoEl.textContent = "LevelCfg: [Downloading...]";
+                    statusDot.className = 'status-dot';
+
+                    const urlObj = new URL(workerConfig.url);
+                    urlObj.searchParams.set("file", "LevelCfg.json");
+
+                    const resp = await fetch(urlObj.toString(), {
+                        method: "GET",
+                        headers: { "X-Auth-Password": workerConfig.pwd }
+                    });
+
+                    if (!resp.ok) {
+                        // Likely file doesn't exist yet, which is fine
+                        throw new Error(resp.status === 500 ? "File Not Found or Error" : resp.statusText);
+                    }
+
+                    const raw = await resp.json();
+                    if (Array.isArray(raw)) {
+                        levelConfigMap = {};
+                        raw.forEach(item => { if (item.ID) levelConfigMap[item.ID] = item; });
+                        if (currentSeriesIndex !== -1) renderLevelsList();
+
+                        infoEl.textContent = "[Remote] Gist (LevelCfg)";
+                        infoEl.title = "已加载远程 Level配置";
+                        statusDot.className = 'status-dot active remote';
+                        alert("✅ 远程 Level 配置加载成功！");
+                    } else {
+                        throw new Error("格式错误: 非数组");
+                    }
+
+                } catch (err) {
+                    console.warn("Remote Level Load:", err);
+                    infoEl.textContent = "LevelCfg: (未找到或加载失败)";
+                    statusDot.className = 'status-dot error';
+                    // Optional: Don't alert if it's just missing, to avoid annoyance? 
+                    // User asked for function, so alert is probably better or console. 
+                    // Let's stick to console warn + UI status update for now to avoid blocking flow
+                } finally {
+                    // Unlocks
+                    btn.disabled = false;
+                    btn.textContent = "☁️ 网络加载";
+                    const otherBtn = document.querySelector("#levelCfgInput + button");
+                    if (otherBtn) otherBtn.disabled = false;
+                }
+            }
+
+            async function saveToRemote() {
+                if (!workerConfig.url || !workerConfig.pwd) {
+                    showOnlineSettings();
+                    if (!workerConfig.url || !workerConfig.pwd) return;
+                }
+
+                if (!confirm("⚠️ 确定要保存修改到远程 Gist 吗？这将直接影响线上配置！")) return;
+
+                const btn = document.getElementById('saveRemoteBtn');
+                const originalText = btn.textContent;
+                btn.textContent = "Saving...";
+                btn.disabled = true;
+
+                try {
+                    // Construct the Gist payload
+                    const payload = {
+                        files: {
+                            "SeriesLocaleCfg.json": {
+                                content: JSON.stringify(fullConfigData, null, 2)
+                            }
+                        }
+                    };
+
+                    const resp = await fetch(workerConfig.url, {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                            "X-Auth-Password": workerConfig.pwd
+                        },
+                        body: JSON.stringify(payload)
+                    });
+
+                    if (!resp.ok) {
+                        const errText = await resp.text();
+                        throw new Error(`Server Error (${resp.status}): ${errText}`);
+                    }
+
+                    const resJson = await resp.json();
+                    console.log("Save Response:", resJson);
+
+                    alert("✅ 保存成功！Gist 已更新。");
+                    markSaved();
+
+                } catch (err) {
+                    alert("❌ 保存失败: " + err.message);
+                } finally {
+                    btn.textContent = originalText;
+                    btn.disabled = false;
+                }
+            }
+
+            // Data Structure:
+            // fullConfigData = { 
+            //    configs: { "base_global": [...], "base_us": [...] }, 
+            //    mapping: { "default": "base_global", "US": "base_us" } 
+            // }
+            let fullConfigData = { configs: {}, mapping: {} };
+
+            // Current Context
+            let currentConfigKey = "";
+            let jsonData = []; // Points to fullConfigData.configs[currentConfigKey]
+
+            let levelConfigMap = {};
+            let currentSeriesIndex = -1;
+
+            // --- File Loading: SeriesCfg ---
+            document.getElementById('fileInput').addEventListener('change', function (event) {
+                const file = event.target.files[0];
+                if (!file) return;
+
+                // Update Display
+                const displayPath = file.path || file.name; // file.path works in Electron/some envs
+                const displayEl = document.getElementById('seriesPathDisplay');
+                displayEl.textContent = "[Local] " + displayPath;
+                displayEl.title = displayPath;
+                displayEl.style.color = ""; // Reset error red
+                document.getElementById('seriesStatusDot').className = 'status-dot active';
+
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    try {
+                        const raw = JSON.parse(e.target.result);
+
+                        // 1. Data Migration / Detection
+                        if (Array.isArray(raw)) {
+                            // Legacy Array Format -> Convert to New Structure
+                            fullConfigData = {
+                                configs: { "base_global": raw },
+                                mapping: { "default": "base_global" }
+                            };
+                            alert("⚠️ 检测到旧版格式，已自动转换为新版结构 (base_global)。");
+                        } else if (raw.configs && raw.mapping) {
+                            // New Format
+                            fullConfigData = raw;
+                        } else {
+                            throw new Error("无法识别的 JSON 结构");
+                        }
+
+                        // 2. Initialize UI
+                        initConfigKeySelector();
+                        // Removed old status element update
+
+                        document.getElementById('exportBtn').disabled = false;
+                        document.getElementById('copyBtn').disabled = false;
+                        document.getElementById('editorArea').style.display = 'block';
+                        document.getElementById('idSelectorContainer').style.display = 'block';
+                        markSaved();
+                    } catch (err) { alert('解析错误: ' + err.message); }
+                };
+                reader.readAsText(file);
             });
 
-            // 2. Initial Selection
-            currentConfigKey = keys[0]; // Default to first
-            keySelect.value = currentConfigKey;
+            // --- File Loading: LevelCfg ---
+            document.getElementById('levelCfgInput').addEventListener('change', function (event) {
+                const file = event.target.files[0];
+                if (!file) return;
 
-            loadSelectedConfigKey();
-        }
+                // Update Display
+                const displayPath = file.path || file.name;
+                const displayEl = document.getElementById('levelPathDisplay');
+                displayEl.textContent = "[Local] " + displayPath;
+                displayEl.title = displayPath;
+                document.getElementById('levelStatusDot').className = 'status-dot active';
 
-        function loadSelectedConfigKey() {
-            currentConfigKey = document.getElementById('configKeySelect').value;
-            jsonData = fullConfigData.configs[currentConfigKey];
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    try {
+                        const cfgData = JSON.parse(e.target.result);
+                        levelConfigMap = {};
+                        cfgData.forEach(item => { if (item.ID) levelConfigMap[item.ID] = item; });
 
-            // Re-init Series Selector for this config set
-            initSeriesEditor();
-        }
+                        // Removed old status element update
+                        if (currentSeriesIndex !== -1) renderLevelsList();
+                        alert(`成功加载详情配置！包含 ${cfgData.length} 个关卡数据。`);
+                    } catch (err) { alert('LevelCfg 解析错误: ' + err.message); }
+                };
+                reader.readAsText(file);
+            });
 
-        function addNewConfigSet() {
-            const name = prompt("请输入新配置集名称 (例如 base_cn):", "base_cn");
-            if (!name) return;
-            if (fullConfigData.configs[name]) { alert("名称已存在"); return; }
+            // --- Config Key Management ---
+            function initConfigKeySelector() {
+                // 1. Populate Config Key Select
+                const keySelect = document.getElementById('configKeySelect');
+                keySelect.innerHTML = '';
 
-            // Clone currently selected data or empty
-            if (confirm("是否复制当前选中的配置数据？(取消则创建空配置)")) {
-                fullConfigData.configs[name] = JSON.parse(JSON.stringify(jsonData));
-            } else {
-                fullConfigData.configs[name] = [];
+                const keys = Object.keys(fullConfigData.configs);
+                if (keys.length === 0) {
+                    // Should not happen if migrated correctly, but safe guard
+                    fullConfigData.configs["base_global"] = [];
+                    keys.push("base_global");
+                }
+
+                keys.forEach(k => {
+                    const opt = document.createElement('option');
+                    opt.value = k; opt.text = k;
+                    keySelect.appendChild(opt);
+                });
+
+                // 2. Initial Selection
+                if (!currentConfigKey || !fullConfigData.configs[currentConfigKey]) {
+                    currentConfigKey = keys[0];
+                }
+                keySelect.value = currentConfigKey;
+
+                loadSelectedConfigKey();
             }
 
-            initConfigKeySelector(); // Refresh list
-            document.getElementById('configKeySelect').value = name;
-            loadSelectedConfigKey();
-            markUnsaved();
-        }
+            function loadSelectedConfigKey() {
+                currentConfigKey = document.getElementById('configKeySelect').value;
+                jsonData = fullConfigData.configs[currentConfigKey];
 
-        function duplicateConfigSet() {
-            const name = prompt(`请输入新配置集名称 (复制自 ${currentConfigKey}):`, `${currentConfigKey}_copy`);
-            if (!name) return;
-            if (fullConfigData.configs[name]) { alert("名称已存在"); return; }
+                // Re-init Series Selector for this config set
+                initSeriesEditor();
+            }
 
-            fullConfigData.configs[name] = JSON.parse(JSON.stringify(jsonData));
+            // --- Config Set Modal Logic ---
+            function showConfigSetModal() {
+                const tbody = document.getElementById('configSetTableBody');
+                tbody.innerHTML = '';
 
-            initConfigKeySelector();
-            document.getElementById('configKeySelect').value = name;
-            loadSelectedConfigKey();
-            markUnsaved();
-        }
+                Object.keys(fullConfigData.configs).forEach(key => {
+                    const count = fullConfigData.configs[key].length;
+                    const tr = document.createElement('tr');
+                    tr.style.borderBottom = "1px solid #eee";
+                    tr.innerHTML = `
+                    <td style="padding:10px; font-weight:bold; color:#2980b9;">${key}</td>
+                    <td style="padding:10px;">${count} Series</td>
+                    <td style="padding:10px;">
+                        <button class="btn-icon info" style="width:24px; height:24px; margin-right:5px;" onclick="renameConfigSet('${key}')" title="重命名 (Rename)">✎</button>
+                        <button class="btn-icon delete" style="width:24px; height:24px;" onclick="deleteConfigSetFromModal('${key}')" title="删除 (Delete)">✕</button>
+                    </td>
+                `;
+                    tbody.appendChild(tr);
+                });
 
-        function deleteConfigSet() {
-            const keys = Object.keys(fullConfigData.configs);
-            if (keys.length <= 1) { alert("至少保留一个配置集！"); return; }
+                document.getElementById('configSetModal').style.display = 'block';
+            }
 
-            if (confirm(`确定要删除配置集 [${currentConfigKey}] 吗？此操作不可恢复！`)) {
-                delete fullConfigData.configs[currentConfigKey];
-                // Clean up mappings pointing to this
+            function closeConfigSetModal() {
+                document.getElementById('configSetModal').style.display = 'none';
+            }
+
+            function addNewConfigSet(fromModal = false) {
+                const name = prompt("请输入新配置集名称 (例如 base_cn):", "base_cn");
+                if (!name) return;
+                if (fullConfigData.configs[name]) { alert("名称已存在"); return; }
+
+                // Clone currently selected data or empty
+                // If called from modal, just create empty? Or ask?
+                // Let's simplified: Create Empty default, or Copy Current default.
+                // The buttons differentiate: "Empty" vs "Copy".
+
+                // Logic for "Empty":
+                fullConfigData.configs[name] = [];
+
+                afterConfigActions(name, fromModal);
+            }
+
+            function duplicateConfigSet(fromModal = false) {
+                const name = prompt(`请输入新配置集名称 (复制自 ${currentConfigKey}):`, `${currentConfigKey}_copy`);
+                if (!name) return;
+                if (fullConfigData.configs[name]) { alert("名称已存在"); return; }
+
+                fullConfigData.configs[name] = JSON.parse(JSON.stringify(jsonData));
+                afterConfigActions(name, fromModal);
+            }
+
+            function afterConfigActions(newName, fromModal) {
+                initConfigKeySelector(); // Refresh Main UI
+                document.getElementById('configKeySelect').value = newName;
+                loadSelectedConfigKey();
+                markUnsaved();
+
+                if (fromModal) {
+                    showConfigSetModal(); // Refresh Modal UI
+                }
+            }
+
+            function renameConfigSet(oldKey) {
+                const newKey = prompt(`重命名配置集 [${oldKey}] 为:`, oldKey);
+                if (!newKey || newKey === oldKey) return;
+                if (fullConfigData.configs[newKey]) { alert("新名称已存在！"); return; }
+
+                // 1. Move Data
+                fullConfigData.configs[newKey] = fullConfigData.configs[oldKey];
+                delete fullConfigData.configs[oldKey];
+
+                // 2. Update Mappings
+                let mapUpdated = false;
                 for (let loc in fullConfigData.mapping) {
-                    if (fullConfigData.mapping[loc] === currentConfigKey) {
+                    if (fullConfigData.mapping[loc] === oldKey) {
+                        fullConfigData.mapping[loc] = newKey;
+                        mapUpdated = true;
+                    }
+                }
+                if (mapUpdated) {
+                    // alert(`关联的映射已更新为 ${newKey}`);
+                }
+
+                // 3. Update Current Key if needed
+                if (currentConfigKey === oldKey) {
+                    currentConfigKey = newKey;
+                }
+
+                initConfigKeySelector();
+                document.getElementById('configKeySelect').value = currentConfigKey;
+                showConfigSetModal();
+                markUnsaved();
+            }
+
+            function deleteConfigSetFromModal(key) {
+                const keys = Object.keys(fullConfigData.configs);
+                if (keys.length <= 1) { alert("必须至少保留一个配置集！"); return; }
+
+                if (!confirm(`确定要删除配置集 [${key}] 吗？\n包含 ${fullConfigData.configs[key].length} 个 Series。\n此操作不可恢复！`)) return;
+
+                delete fullConfigData.configs[key];
+
+                // Clean Mappings
+                for (let loc in fullConfigData.mapping) {
+                    if (fullConfigData.mapping[loc] === key) {
                         delete fullConfigData.mapping[loc];
                     }
                 }
+
+                // If we deleted the current one, switch to another
+                if (currentConfigKey === key) {
+                    currentConfigKey = Object.keys(fullConfigData.configs)[0];
+                }
+
                 initConfigKeySelector();
+                document.getElementById('configKeySelect').value = currentConfigKey;
+                loadSelectedConfigKey();
+
+                showConfigSetModal();
                 markUnsaved();
             }
-        }
 
-        // --- Series Editor Logic (Existing adapted) ---
-        function initSeriesEditor() {
-            const select = document.getElementById('idSelect');
-            select.innerHTML = '';
+            // Removed old deleteConfigSet fn as it is replaced by modal logic
 
-            if (!jsonData || jsonData.length === 0) {
-                // Handle empty config set
-                const opt = document.createElement('option');
-                opt.text = "(无数据 - 点击新增)";
-                select.appendChild(opt);
-                // Disable inputs maybe?
-                currentSeriesIndex = -1;
-                document.getElementById('normalView').style.display = 'none';
-                return;
+
+            // --- Series Editor Logic (Existing adapted) ---
+            function initSeriesEditor() {
+                const select = document.getElementById('idSelect');
+                select.innerHTML = '';
+
+                if (!jsonData || jsonData.length === 0) {
+                    // Handle empty config set
+                    const opt = document.createElement('option');
+                    opt.text = "(无数据 - 点击新增)";
+                    select.appendChild(opt);
+                    // Disable inputs maybe?
+                    currentSeriesIndex = -1;
+                    document.getElementById('normalView').style.display = 'none';
+                    return;
+                }
+
+                // check duplicate ID
+                let idMap = {};
+                jsonData.forEach((s, i) => {
+                    const opt = document.createElement('option');
+                    opt.value = i;
+                    opt.text = s.ID;
+                    if (idMap[s.ID]) opt.text += " (❌冲突)";
+                    idMap[s.ID] = true;
+                    select.appendChild(opt);
+                });
+
+                select.value = 0;
+                loadSelectedSeries();
             }
 
-            // check duplicate ID
-            let idMap = {};
-            jsonData.forEach((s, i) => {
-                const opt = document.createElement('option');
-                opt.value = i;
-                opt.text = s.ID;
-                if (idMap[s.ID]) opt.text += " (❌冲突)";
-                idMap[s.ID] = true;
-                select.appendChild(opt);
-            });
+            function loadSelectedSeries() {
+                const select = document.getElementById('idSelect');
+                if (jsonData.length === 0) return;
 
-            select.value = 0;
-            loadSelectedSeries();
-        }
+                currentSeriesIndex = parseInt(select.value);
+                const data = jsonData[currentSeriesIndex];
 
-        function loadSelectedSeries() {
-            const select = document.getElementById('idSelect');
-            if (jsonData.length === 0) return;
+                document.getElementById('orderInput').value = data.Order;
+                document.getElementById('imgInput').value = data.Img;
 
-            currentSeriesIndex = parseInt(select.value);
-            const data = jsonData[currentSeriesIndex];
+                document.getElementById('normalView').style.display = 'block';
+                document.getElementById('bulkView').style.display = 'none';
+                document.getElementById('overwriteCheckbox').checked = false;
+                document.getElementById('bulkTextarea').value = "";
 
-            document.getElementById('orderInput').value = data.Order;
-            document.getElementById('imgInput').value = data.Img;
-
-            document.getElementById('normalView').style.display = 'block';
-            document.getElementById('bulkView').style.display = 'none';
-            document.getElementById('overwriteCheckbox').checked = false;
-            document.getElementById('bulkTextarea').value = "";
-
-            renderLevelsList();
-        }
-
-        function addNewSeries() {
-            const id = prompt("请输入新的 ID (如 xl100):");
-            if (!id) return;
-
-            // Check if ID exists in current config
-            if (jsonData.some(item => item.ID === id)) {
-                alert("ID 已存在！");
-                return;
+                renderLevelsList();
             }
 
-            jsonData.push({
-                "ID": id,
-                "Order": jsonData.length,
-                "Img": "",
-                "Levels": []
-            });
+            function addNewSeries() {
+                const id = prompt("请输入新的 ID (如 xl100):");
+                if (!id) return;
 
-            initSeriesEditor();
-            // Select the new one
-            const select = document.getElementById('idSelect');
-            select.value = jsonData.length - 1;
-            loadSelectedSeries();
-            markUnsaved();
-        }
+                // Check if ID exists in current config
+                if (jsonData.some(item => item.ID === id)) {
+                    alert("ID 已存在！");
+                    return;
+                }
 
-        function removeSeries() {
-            if (currentSeriesIndex === -1) return;
-            if (confirm(`确定删除 ${jsonData[currentSeriesIndex].ID} 吗？`)) {
-                jsonData.splice(currentSeriesIndex, 1);
+                jsonData.push({
+                    "ID": id,
+                    "Order": jsonData.length,
+                    "Img": "",
+                    "Levels": []
+                });
+
                 initSeriesEditor();
+                // Select the new one
+                const select = document.getElementById('idSelect');
+                select.value = jsonData.length - 1;
+                loadSelectedSeries();
                 markUnsaved();
             }
-        }
 
-        function updateCurrentData() {
-            if (currentSeriesIndex === -1) return;
-            jsonData[currentSeriesIndex].Order = parseInt(document.getElementById('orderInput').value);
-            jsonData[currentSeriesIndex].Img = document.getElementById('imgInput').value;
-            markUnsaved();
-        }
+            function removeSeries() {
+                if (currentSeriesIndex === -1) return;
+                if (confirm(`确定删除 ${jsonData[currentSeriesIndex].ID} 吗？`)) {
+                    jsonData.splice(currentSeriesIndex, 1);
+                    initSeriesEditor();
+                    markUnsaved();
+                }
+            }
 
-        function renderLevelsList() {
-            if (!jsonData[currentSeriesIndex]) return;
-            const levels = jsonData[currentSeriesIndex].Levels;
-            const container = document.getElementById('levelsList');
-            container.innerHTML = '';
+            function updateCurrentData() {
+                if (currentSeriesIndex === -1) return;
+                jsonData[currentSeriesIndex].Order = parseInt(document.getElementById('orderInput').value);
+                jsonData[currentSeriesIndex].Img = document.getElementById('imgInput').value;
+                markUnsaved();
+            }
 
-            levels.forEach((id, idx) => {
-                const detail = levelConfigMap[id];
-                const displayName = detail ? detail.Name : '';
-                const hasDetail = !!detail;
+            function renderLevelsList() {
+                if (!jsonData[currentSeriesIndex]) return;
+                const levels = jsonData[currentSeriesIndex].Levels;
+                const container = document.getElementById('levelsList');
+                container.innerHTML = '';
 
-                const el = document.createElement('div');
-                el.className = 'level-item';
-                el.dataset.index = idx;
+                levels.forEach((id, idx) => {
+                    const detail = levelConfigMap[id];
+                    const displayName = detail ? detail.Name : '';
+                    const hasDetail = !!detail;
 
-                el.innerHTML = `
+                    const el = document.createElement('div');
+                    el.className = 'level-item';
+                    el.dataset.index = idx;
+
+                    el.innerHTML = `
                     <div class="level-content" draggable="true">
                         <span class="level-index">${idx + 1}</span>
                         <div class="level-text-group">
@@ -1124,227 +1670,268 @@
                         <button class="btn-icon delete" onclick="deleteItem(${idx})" title="删除">✕</button>
                     </div>
                 `;
-                el.addEventListener('dragstart', handleDragStart);
-                el.addEventListener('dragover', handleDragOver);
-                el.addEventListener('drop', handleDrop);
-                el.addEventListener('dragend', handleDragEnd);
-                container.appendChild(el);
-            });
-        }
-
-        function moveItem(idx, dir) {
-            const levels = jsonData[currentSeriesIndex].Levels;
-            const target = idx + dir;
-            if (target >= 0 && target < levels.length) {
-                [levels[idx], levels[target]] = [levels[target], levels[idx]];
-                renderLevelsList();
-                markUnsaved();
+                    el.addEventListener('dragstart', handleDragStart);
+                    el.addEventListener('dragover', handleDragOver);
+                    el.addEventListener('drop', handleDrop);
+                    el.addEventListener('dragend', handleDragEnd);
+                    container.appendChild(el);
+                });
             }
-        }
-        function deleteItem(idx) {
-            if (confirm('确定要删除这项吗？')) {
-                jsonData[currentSeriesIndex].Levels.splice(idx, 1);
-                renderLevelsList();
-                markUnsaved();
-            }
-        }
-        function addNewLevel() {
-            const id = prompt("请输入新的 Level ID:");
-            if (id) {
-                const items = id.split(/[,，\s]+/).filter(x => x); // Support multiple add
-                items.forEach(x => jsonData[currentSeriesIndex].Levels.push(x.trim()));
-                renderLevelsList();
-                const c = document.getElementById('levelsList');
-                setTimeout(() => c.scrollTop = c.scrollHeight, 50);
-                markUnsaved();
-            }
-        }
 
-        // --- Detail Modal ---
-        function showDetailModal(id) {
-            const data = levelConfigMap[id];
-            if (!data) return;
-            document.getElementById('detailTitle').textContent = `关卡详情: ${id} (${data.Name})`;
-            document.getElementById('detailContent').textContent = JSON.stringify(data, null, 2);
-            document.getElementById('detailModal').style.display = 'block';
-        }
-        function closeDetailModal() { document.getElementById('detailModal').style.display = 'none'; }
-
-        // --- Bulk Edit ---
-        function toggleBulkEdit() {
-            const normalView = document.getElementById('normalView');
-            const bulkView = document.getElementById('bulkView');
-            if (bulkView.style.display === 'none') {
-                normalView.style.display = 'none';
-                bulkView.style.display = 'block';
-                document.getElementById('bulkTextarea').focus();
-            } else {
-                normalView.style.display = 'block';
-                bulkView.style.display = 'none';
-            }
-        }
-
-        // --- Focus Mode ---
-        function toggleFocusMode() {
-            const wrapper = document.getElementById('normalView'); // We make the wrapper full screen
-            wrapper.classList.toggle('focus-mode');
-
-            // Adjust header visibility or style if needed inside focus mode
-            // Since we applied styles to .focus-mode children, it should be fine.
-
-            if (wrapper.classList.contains('focus-mode')) {
-                // Add an explicit close button or header hint if needed
-                // For now, the toggle button is outside the wrapper, which is a problem if wrapper covers it.
-                // WE NEED TO MOVE controls inside or handle the wrapper differently.
-            }
-        }
-        function copyCurrentToBulk() {
-            const currentLevels = jsonData[currentSeriesIndex].Levels;
-            document.getElementById('bulkTextarea').value = currentLevels.join(', ');
-        }
-        function applyBulkChanges() {
-            const rawText = document.getElementById('bulkTextarea').value;
-            const isOverwrite = document.getElementById('overwriteCheckbox').checked;
-            const newLevels = rawText.split(/[\n,]+/).map(item => item.trim()).filter(item => item !== "");
-
-            if (newLevels.length === 0 && isOverwrite && !confirm("列表为空，确定要清空所有 Levels 吗？")) return;
-
-            if (isOverwrite) {
-                jsonData[currentSeriesIndex].Levels = newLevels;
-                alert(`已覆盖！当前列表共 ${newLevels.length} 项。`);
-                markUnsaved();
-            } else {
-                const currentLevels = jsonData[currentSeriesIndex].Levels;
-                const newItemsSet = new Set(newLevels);
-                const remainingOldItems = currentLevels.filter(item => !newItemsSet.has(item));
-                const finalList = [...newLevels, ...remainingOldItems];
-                jsonData[currentSeriesIndex].Levels = finalList;
-                alert(`已合并！`);
-                markUnsaved();
-            }
-            toggleBulkEdit();
-            renderLevelsList();
-        }
-
-        // --- Drag & Drop ---
-        let dragSrc = null;
-        function handleDragStart(e) { dragSrc = this; e.dataTransfer.effectAllowed = 'move'; this.style.opacity = '0.4'; }
-        function handleDragOver(e) { if (e.preventDefault) e.preventDefault(); return false; }
-        function handleDrop(e) {
-            if (e.stopPropagation) e.stopPropagation();
-            if (dragSrc !== this) {
-                const oldIdx = parseInt(dragSrc.dataset.index);
-                const newIdx = parseInt(this.dataset.index);
+            function moveItem(idx, dir) {
                 const levels = jsonData[currentSeriesIndex].Levels;
-
-                if (newIdx < 0 || newIdx >= levels.length) return false;
-                if (newIdx !== oldIdx) {
-                    const [item] = levels.splice(oldIdx, 1);
-                    levels.splice(newIdx, 0, item);
+                const target = idx + dir;
+                if (target >= 0 && target < levels.length) {
+                    [levels[idx], levels[target]] = [levels[target], levels[idx]];
                     renderLevelsList();
                     markUnsaved();
                 }
             }
-            return false;
-        }
-        function handleDragEnd() { this.style.opacity = '1'; }
+            function deleteItem(idx) {
+                if (confirm('确定要删除这项吗？')) {
+                    jsonData[currentSeriesIndex].Levels.splice(idx, 1);
+                    renderLevelsList();
+                    markUnsaved();
+                }
+            }
+            function addNewLevel() {
+                const id = prompt("请输入新的 Level ID:");
+                if (id) {
+                    const items = id.split(/[,，\s]+/).filter(x => x); // Support multiple add
+                    items.forEach(x => jsonData[currentSeriesIndex].Levels.push(x.trim()));
+                    renderLevelsList();
+                    const c = document.getElementById('levelsList');
+                    setTimeout(() => c.scrollTop = c.scrollHeight, 50);
+                    markUnsaved();
+                }
+            }
 
-        // --- Export / Copy ---
-        function exportJson() {
-            const str = JSON.stringify(fullConfigData, null, 2);
-            const blob = new Blob([str], { type: "application/json" });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url; a.download = "SeriesLocaleCfg.json";
-            document.body.appendChild(a); a.click(); document.body.removeChild(a);
-        }
+            // --- Detail Modal ---
+            function showDetailModal(id) {
+                const data = levelConfigMap[id];
+                if (!data) return;
+                document.getElementById('detailTitle').textContent = `关卡详情: ${id} (${data.Name})`;
+                document.getElementById('detailContent').textContent = JSON.stringify(data, null, 2);
+                document.getElementById('detailModal').style.display = 'block';
+            }
+            function closeDetailModal() { document.getElementById('detailModal').style.display = 'none'; }
 
-        async function copyJson() {
-            const str = JSON.stringify(fullConfigData, null, 2);
-            try {
-                await navigator.clipboard.writeText(str);
-                const btn = document.getElementById('copyBtn');
-                const t = btn.textContent;
-                btn.textContent = "✅ 已复制Full JSON!";
-                btn.classList.add("btn-success");
-                setTimeout(() => { btn.textContent = t; btn.classList.remove("btn-success"); }, 2000);
-            } catch (err) { alert("复制失败: " + err); }
-        }
+            // --- Bulk Edit ---
+            function toggleBulkEdit() {
+                const normalView = document.getElementById('normalView');
+                const bulkView = document.getElementById('bulkView');
+                if (bulkView.style.display === 'none') {
+                    normalView.style.display = 'none';
+                    bulkView.style.display = 'block';
+                    document.getElementById('bulkTextarea').focus();
+                } else {
+                    normalView.style.display = 'block';
+                    bulkView.style.display = 'none';
+                }
+            }
 
-        // --- Mapping Modal ---
-        function showMappingModal() {
-            const tbody = document.getElementById('mappingTableBody');
-            tbody.innerHTML = '';
+            // --- Focus Mode ---
+            function toggleFocusMode() {
+                const wrapper = document.getElementById('normalView'); // We make the wrapper full screen
+                wrapper.classList.toggle('focus-mode');
 
-            // Populate Rows
-            for (let locale in fullConfigData.mapping) {
-                const targetKey = fullConfigData.mapping[locale];
+                // Adjust header visibility or style if needed inside focus mode
+                // Since we applied styles to .focus-mode children, it should be fine.
 
-                const tr = document.createElement('tr');
-                tr.style.borderBottom = "1px solid #eee";
-                tr.innerHTML = `
+                if (wrapper.classList.contains('focus-mode')) {
+                    // Add an explicit close button or header hint if needed
+                    // For now, the toggle button is outside the wrapper, which is a problem if wrapper covers it.
+                    // WE NEED TO MOVE controls inside or handle the wrapper differently.
+                }
+            }
+            function copyCurrentToBulk() {
+                const currentLevels = jsonData[currentSeriesIndex].Levels;
+                document.getElementById('bulkTextarea').value = currentLevels.join(', ');
+            }
+            function applyBulkChanges() {
+                const rawText = document.getElementById('bulkTextarea').value;
+                const isOverwrite = document.getElementById('overwriteCheckbox').checked;
+                const newLevels = rawText.split(/[\n,]+/).map(item => item.trim()).filter(item => item !== "");
+
+                if (newLevels.length === 0 && isOverwrite && !confirm("列表为空，确定要清空所有 Levels 吗？")) return;
+
+                if (isOverwrite) {
+                    jsonData[currentSeriesIndex].Levels = newLevels;
+                    alert(`已覆盖！当前列表共 ${newLevels.length} 项。`);
+                    markUnsaved();
+                } else {
+                    const currentLevels = jsonData[currentSeriesIndex].Levels;
+                    const newItemsSet = new Set(newLevels);
+                    const remainingOldItems = currentLevels.filter(item => !newItemsSet.has(item));
+                    const finalList = [...newLevels, ...remainingOldItems];
+                    jsonData[currentSeriesIndex].Levels = finalList;
+                    alert(`已合并！`);
+                    markUnsaved();
+                }
+                toggleBulkEdit();
+                renderLevelsList();
+            }
+
+            // --- Drag & Drop ---
+            let dragSrc = null;
+            function handleDragStart(e) { dragSrc = this; e.dataTransfer.effectAllowed = 'move'; this.style.opacity = '0.4'; }
+            function handleDragOver(e) { if (e.preventDefault) e.preventDefault(); return false; }
+            function handleDrop(e) {
+                if (e.stopPropagation) e.stopPropagation();
+                if (dragSrc !== this) {
+                    const oldIdx = parseInt(dragSrc.dataset.index);
+                    const newIdx = parseInt(this.dataset.index);
+                    const levels = jsonData[currentSeriesIndex].Levels;
+
+                    if (newIdx < 0 || newIdx >= levels.length) return false;
+                    if (newIdx !== oldIdx) {
+                        const [item] = levels.splice(oldIdx, 1);
+                        levels.splice(newIdx, 0, item);
+                        renderLevelsList();
+                        markUnsaved();
+                    }
+                }
+                return false;
+            }
+            function handleDragEnd() { this.style.opacity = '1'; }
+
+            // --- Export / Copy ---
+            function exportJson() {
+                const str = JSON.stringify(fullConfigData, null, 2);
+                const blob = new Blob([str], { type: "application/json" });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url; a.download = "SeriesLocaleCfg.json";
+                document.body.appendChild(a); a.click(); document.body.removeChild(a);
+            }
+
+            async function copyJson() {
+                const str = JSON.stringify(fullConfigData, null, 2);
+                try {
+                    await navigator.clipboard.writeText(str);
+                    const btn = document.getElementById('copyBtn');
+                    const t = btn.textContent;
+                    btn.textContent = "✅ 已复制Full JSON!";
+                    btn.classList.add("btn-success");
+                    setTimeout(() => { btn.textContent = t; btn.classList.remove("btn-success"); }, 2000);
+                } catch (err) { alert("复制失败: " + err); }
+            }
+
+            // --- Mapping Modal ---
+            function showMappingModal() {
+                const tbody = document.getElementById('mappingTableBody');
+                tbody.innerHTML = '';
+
+                // Populate Rows
+                for (let locale in fullConfigData.mapping) {
+                    const targetKey = fullConfigData.mapping[locale];
+
+                    const tr = document.createElement('tr');
+                    tr.style.borderBottom = "1px solid #eee";
+                    tr.innerHTML = `
                     <td style="padding:10px; font-family:monospace; font-weight:bold;">${locale}</td>
                     <td style="padding:10px;">
                         <span style="background:#e8f5e9; color:#27ae60; padding:2px 6px; border-radius:4px;">${targetKey}</span>
                     </td>
                     <td style="padding:10px;">
+                        <button class="btn-icon info" style="width:24px; height:24px; margin-right:5px;" onclick="editMapping('${locale}')" title="编辑">✎</button>
                         <button class="btn-icon delete" style="width:24px; height:24px;" onclick="removeMapping('${locale}')" title="删除">✕</button>
                     </td>
                 `;
-                tbody.appendChild(tr);
+                    tbody.appendChild(tr);
+                }
+
+                // Populate Dropdown
+                const select = document.getElementById('newMapKeySelect');
+                select.innerHTML = '';
+                Object.keys(fullConfigData.configs).forEach(k => {
+                    const opt = document.createElement('option');
+                    opt.value = k; opt.text = k;
+                    select.appendChild(opt);
+                });
+
+                document.getElementById('mappingModal').style.display = 'block';
             }
 
-            // Populate Dropdown
-            const select = document.getElementById('newMapKeySelect');
-            select.innerHTML = '';
-            Object.keys(fullConfigData.configs).forEach(k => {
-                const opt = document.createElement('option');
-                opt.value = k; opt.text = k;
-                select.appendChild(opt);
-            });
+            function addNewMapping() {
+                const locale = document.getElementById('newLocaleInput').value.trim();
+                const target = document.getElementById('newMapKeySelect').value;
 
-            document.getElementById('mappingModal').style.display = 'block';
-        }
+                if (!locale || !target) { alert("请填写完整"); return; }
+                if (fullConfigData.mapping[locale]) {
+                    if (!confirm(`${locale} 已存在 (当前值: ${fullConfigData.mapping[locale]})，确定要覆盖吗？`)) {
+                        return;
+                    }
+                }
 
-        function addNewMapping() {
-            const locale = document.getElementById('newLocaleInput').value.trim();
-            const target = document.getElementById('newMapKeySelect').value;
+                fullConfigData.mapping[locale] = target;
+                showMappingModal(); // Refresh
+                document.getElementById('newLocaleInput').value = '';
+                markUnsaved();
+            }
 
-            if (!locale || !target) { alert("请填写完整"); return; }
-            if (fullConfigData.mapping[locale]) {
-                if (!confirm(`${locale} 已存在 (当前值: ${fullConfigData.mapping[locale]})，确定要覆盖吗？`)) {
-                    return;
+            function editMapping(locale) {
+                const currentTarget = fullConfigData.mapping[locale];
+                // Show a prompt with a dropdown text equivalent? 
+                // Since prompt only takes text, we ask user to input the config key exactly.
+                // OR simpler: we just delete and add new? 
+                // Better: Prompt user to choose from available keys.
+                // Since standard prompt is text-only, let's use a small trick: 
+                // We just ask user to confirm they want to change it, then we can use a custom simple flow 
+                // or just use the "Add" input area to "Edit".
+
+                // ACTUALLY: Let's use a prompt to ask for new Key. 
+                // To make it user friendly, we should probably list available keys in the prompt message.
+                const keys = Object.keys(fullConfigData.configs).join(', ');
+                const newKey = prompt(`正在编辑 [${locale}]。\n当前指向: ${currentTarget}\n\n请输入新的目标配置集 (必须是: ${keys}):`, currentTarget);
+
+                if (newKey && newKey !== currentTarget) {
+                    if (!fullConfigData.configs[newKey]) {
+                        alert(`错误: 配置集 "${newKey}" 不存在。\n\n可用值: ${keys}`);
+                        return;
+                    }
+                    fullConfigData.mapping[locale] = newKey;
+                    showMappingModal();
+                    markUnsaved();
                 }
             }
 
-            fullConfigData.mapping[locale] = target;
-            showMappingModal(); // Refresh
-            document.getElementById('newLocaleInput').value = '';
-            markUnsaved();
-        }
-
-        function removeMapping(locale) {
-            if (locale === 'default') { alert("不能删除 default 映射！"); return; }
-            if (confirm(`确定删除 ${locale} 的映射吗？`)) {
-                delete fullConfigData.mapping[locale];
-                showMappingModal();
-                markUnsaved();
+            function removeMapping(locale) {
+                if (locale === 'default') { alert("不能删除 default 映射！"); return; }
+                if (confirm(`确定删除 ${locale} 的映射吗？`)) {
+                    delete fullConfigData.mapping[locale];
+                    showMappingModal();
+                    markUnsaved();
+                }
             }
-        }
 
-        function closeMappingModal() { document.getElementById('mappingModal').style.display = 'none'; }
-        function showWiki() { document.getElementById('wikiModal').style.display = 'block'; }
-        function closeWiki() { document.getElementById('wikiModal').style.display = 'none'; }
+            function closeMappingModal() { document.getElementById('mappingModal').style.display = 'none'; }
+            function showWiki() { document.getElementById('wikiModal').style.display = 'block'; }
+            function closeWiki() { document.getElementById('wikiModal').style.display = 'none'; }
 
-        window.onclick = function (event) {
-            const wiki = document.getElementById('wikiModal');
-            const detail = document.getElementById('detailModal');
-            const mapModal = document.getElementById('mappingModal');
-            if (event.target == wiki) wiki.style.display = "none";
-            if (event.target == detail) detail.style.display = "none";
-            if (event.target == mapModal) mapModal.style.display = "none";
-        }
-    </script>
+            // --- Back to Top ---
+            window.onscroll = function () { scrollFunction() };
+            function scrollFunction() {
+                const btn = document.getElementById("backToTopBtn");
+                if (document.body.scrollTop > 300 || document.documentElement.scrollTop > 300) {
+                    btn.style.display = "block";
+                } else {
+                    btn.style.display = "none";
+                }
+            }
+            function scrollToTop() {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+
+            window.onclick = function (event) {
+                const wiki = document.getElementById('wikiModal');
+                const detail = document.getElementById('detailModal');
+                const mapModal = document.getElementById('mappingModal');
+                if (event.target == wiki) wiki.style.display = "none";
+                if (event.target == detail) detail.style.display = "none";
+                if (event.target == mapModal) mapModal.style.display = "none";
+            }
+        </script>
 </body>
 
 </html>

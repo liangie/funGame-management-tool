@@ -1,0 +1,157 @@
+
+        /* --- V7.11 Card Layout Styles --- */
+        .config-card {
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 1px solid #ddd;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 20px;
+            /* Wrap if small screen */
+            flex-wrap: wrap; 
+        }
+
+        .config-card.series {
+            background-color: #ecf8fe; /* Light Blue */
+            border-color: #bce0f5;
+        }
+
+        .config-card.level {
+            background-color: #f5f5f5; /* Light Gray */
+            border-color: #ddd;
+        }
+
+        .card-left {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .card-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #333;
+            margin: 0 0 5px 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .card-tag-required {
+            font-size: 12px;
+            color: #c0392b;
+            font-weight: normal;
+            font-style: italic;
+        }
+
+        .card-tag-optional {
+            font-size: 12px;
+            color: #7f8c8d;
+            font-weight: normal;
+            font-style: italic;
+        }
+
+        .file-info-text {
+            color: #555;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background-color: #ccc;
+            display: inline-block;
+        }
+        .status-dot.active { background-color: #27ae60; }
+        .status-dot.error { background-color: #c0392b; }
+        .status-dot.remote { background-color: #27ae60; }
+
+        .card-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            align-items: flex-end;
+        }
+
+        .action-row {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        /* --- Modern Button Refinements for V7.11 --- */
+        .btn-card {
+            background-color: white;
+            border: 1px solid #dcdcdc;
+            padding: 8px 16px;
+            border-radius: 4px; /* Slight round */
+            font-size: 13px;
+            font-weight: 500;
+            color: #333;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        }
+
+        .btn-card:hover {
+            border-color: #aaa;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .btn-primary-blue {
+            background-color: #4facfe;
+            background-image: linear-gradient(to right, #4facfe 0%, #00f2fe 100%);
+            /* Flat fallback or Gradient? Mockup looks flat blue/gradient mix. Let's stick to flat nice blue from mockup */
+            background: #3498db; 
+            color: white;
+            border: none;
+            box-shadow: 0 2px 5px rgba(52, 152, 219, 0.4);
+        }
+        .btn-primary-blue:hover {
+            background: #2980b9;
+            color: white;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(52, 152, 219, 0.4);
+        }
+
+        .btn-primary-red {
+            background: #e74c3c;
+            color: white;
+            border: none;
+            box-shadow: 0 2px 5px rgba(231, 76, 60, 0.4);
+        }
+        .btn-primary-red:hover {
+            background: #c0392b;
+            color: white;
+            transform: translateY(-1px);
+        }
+
+        /* Dropdown/Group style for Export */
+        .btn-group {
+            display: flex;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            background: white;
+        }
+        .btn-group-item {
+            border: none;
+            background: none;
+            padding: 8px 12px;
+            cursor: pointer;
+            font-size: 13px;
+            border-right: 1px solid #eee;
+            color: #555;
+        }
+        .btn-group-item:last-child { border-right: none; }
+        .btn-group-item:hover { background: #f9f9f9; }
+
