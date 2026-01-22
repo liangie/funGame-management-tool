@@ -34,15 +34,11 @@
 
         /* --- Layout & Sticky Header --- */
         .sticky-tools {
-            position: -webkit-sticky;
-            position: sticky;
-            top: 0;
-            z-index: 1000;
+            position: relative;
             background-color: white;
             padding: 15px 20px 5px 20px;
             margin: -25px -25px 20px -25px;
             /* Counteract container padding */
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
             border-bottom: 1px solid #eee;
         }
 
@@ -177,12 +173,32 @@
             display: flex;
             align-items: center;
             flex: 1;
-            cursor: grab;
+            /* Remove cursor:grab from here since we use a handle */
             overflow: hidden;
         }
 
         .level-content:active {
+            /* Remove cursor:grabbing */
+        }
+
+        .drag-handle {
+            cursor: grab;
+            margin-right: 10px;
+            color: #ccc;
+            padding: 4px;
+            font-size: 16px;
+            line-height: 1;
+            display: flex;
+            align-items: center;
+        }
+
+        .drag-handle:active {
             cursor: grabbing;
+            color: #3498db;
+        }
+
+        .level-item:hover .drag-handle {
+            color: #999;
         }
 
         .level-index {
@@ -620,7 +636,7 @@
             display: flex;
         }
 
-        /* --- V7.11 Card Layout Styles --- */
+        /* --- Card Layout Styles --- */
         .config-card {
             border-radius: 8px;
             padding: 20px;
@@ -772,30 +788,10 @@
         .dropdown-btn {
             position: relative;
         }
-
-        /* Sticky State Styles */
-        .sticky-tools.is-stuck {
-            position: sticky;
-            top: 0;
-            background: rgba(255, 255, 255, 0.95) !important;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1) !important;
-            border-bottom: 1px solid #ddd;
-            padding-bottom: 0 !important;
-        }
-
-        /* Hide cards when sticky */
-        .sticky-tools.is-stuck .config-card {
-            display: none;
-        }
-
-        /* Adjust Config Controls when sticky */
-        .sticky-tools.is-stuck #configControls {
-            margin-bottom: 0;
-            border: none;
-            background: transparent;
-            box-shadow: none;
-        }
     </style>
+
+    <!-- SortableJS for Touch-Friendly Drag and Drop -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
 </head>
 
 <body>
@@ -858,7 +854,6 @@
                 </div>
             </div>
 
-            <!-- Configuration Set Controls (V7.14 Redesign) -->
             <div id="configControls"
                 style="background:#fff3e0; padding:15px; border-radius:8px; margin-bottom:10px; border:1px solid #ffe0b2;">
 
@@ -1044,8 +1039,16 @@
                 <span class="close" onclick="closeDetailModal()">&times;</span>
                 <h2 id="detailTitle" style="margin-top:0; color:#2c3e50; padding-bottom:10px;">关卡详情</h2>
                 <pre id="detailContent" class="json-display"></pre>
-                <div style="text-align: right; margin-top:15px;">
-                    <button class="btn" onclick="closeDetailModal()">关闭</button>
+
+                <div
+                    style="background:#f9f9f9; padding:10px; border-radius:4px; margin-top:15px; border:1px solid #eee; display:flex; gap:10px; align-items:center;">
+                    <label style="margin:0;">移动到第几位 (Move to):</label>
+                    <input type="number" id="targetPosInput" style="width:80px;" min="1">
+                    <button class="btn btn-outline" onclick="moveCurrentLevelTo()">Go ➔</button>
+                </div>
+                <div style="display:flex; justify-content:space-between; margin-top:15px;">
+                    <button class="btn btn-primary-red" onclick="deleteCurrentLevel()">🗑 删除此关卡 (Delete)</button>
+                    <button class="btn" onclick="closeDetailModal()">关闭 (Close)</button>
                 </div>
             </div>
         </div>
@@ -1123,7 +1126,7 @@
 
         <script>
             // --- Version Control ---
-            const APP_VERSION = "V7.16";
+            const APP_VERSION = "V7.17";
             document.getElementById('appVersion').textContent = APP_VERSION;
 
             // --- Unsaved Changes Protection ---
@@ -1723,24 +1726,18 @@
                     el.dataset.index = idx;
 
                     el.innerHTML = `
-                    <div class="level-content" draggable="true">
+                    <div class="level-content">
+                        <span class="drag-handle" title="按住拖动排序">☰</span>
                         <span class="level-index">${idx + 1}</span>
                         <div class="level-text-group">
                             <span class="level-id">${id}</span>
                             ${displayName ? `<span class="level-name">${displayName}</span>` : ''}
                         </div>
                     </div>
-                    <div class="level-actions">
-                        ${hasDetail ? `<button class="btn-icon info" onclick="showDetailModal('${id}')" title="查看详情">ℹ️</button>` : ''}
-                        <button class="btn-icon" onclick="moveItem(${idx}, -1)" title="上移">↑</button>
-                        <button class="btn-icon" onclick="moveItem(${idx}, 1)" title="下移">↓</button>
-                        <button class="btn-icon delete" onclick="deleteItem(${idx})" title="删除">✕</button>
-                    </div>
-                `;
-                    el.addEventListener('dragstart', handleDragStart);
-                    el.addEventListener('dragover', handleDragOver);
-                    el.addEventListener('drop', handleDrop);
-                    el.addEventListener('dragend', handleDragEnd);
+                        <div class="level-actions">
+                             <button class="btn-icon info" onclick="showDetailModal('${id}', ${idx})" title="详情/管理">ℹ️</button>
+                        </div>
+                    `;
                     container.appendChild(el);
                 });
             }
@@ -1774,14 +1771,80 @@
             }
 
             // --- Detail Modal ---
-            function showDetailModal(id) {
+            let currentDetailIdx = -1;
+
+            function showDetailModal(id, idx) {
+                currentDetailIdx = idx;
                 const data = levelConfigMap[id];
-                if (!data) return;
-                document.getElementById('detailTitle').textContent = `关卡详情: ${id} (${data.Name})`;
-                document.getElementById('detailContent').textContent = JSON.stringify(data, null, 2);
+
+                document.getElementById('detailTitle').textContent = `关卡详情: ${id}`;
+                if (data) {
+                    document.getElementById('detailTitle').textContent += ` (${data.Name})`;
+                    document.getElementById('detailContent').textContent = JSON.stringify(data, null, 2);
+                } else {
+                    document.getElementById('detailContent').textContent = "(本地未加载 LevelCfg 或无此 ID 配置)";
+                }
+
+                // Pre-fill current position
+                document.getElementById('targetPosInput').value = idx + 1;
+
                 document.getElementById('detailModal').style.display = 'block';
             }
-            function closeDetailModal() { document.getElementById('detailModal').style.display = 'none'; }
+
+            function deleteCurrentLevel() {
+                if (currentDetailIdx === -1) return;
+                if (!confirm(`确定要删除此关卡吗？`)) return;
+
+                // Reuse delete logic
+                jsonData[currentSeriesIndex].Levels.splice(currentDetailIdx, 1);
+                renderLevelsList();
+                markUnsaved();
+                closeDetailModal();
+            }
+
+            function moveCurrentLevelTo() {
+                if (currentDetailIdx === -1) return;
+                const targetInput = document.getElementById('targetPosInput');
+                let targetPos = parseInt(targetInput.value);
+
+                if (isNaN(targetPos) || targetPos < 1) {
+                    alert("请输入有效的数字 (>= 1)");
+                    return;
+                }
+
+                // Convert 1-based index to 0-based
+                let newIdx = targetPos - 1;
+                const levels = jsonData[currentSeriesIndex].Levels;
+
+                // Clamp
+                if (newIdx >= levels.length) newIdx = levels.length - 1;
+                if (newIdx < 0) newIdx = 0;
+
+                if (newIdx === currentDetailIdx) {
+                    alert("已经在该位置了");
+                    return;
+                }
+
+                // Move logic
+                const [item] = levels.splice(currentDetailIdx, 1);
+                levels.splice(newIdx, 0, item);
+
+                renderLevelsList();
+                markUnsaved();
+
+                // Update current modal index to allow continuous moves
+                currentDetailIdx = newIdx;
+                // We don't change title as ID stays same
+
+                alert(`已移动到第 ${newIdx + 1} 位`);
+                // Close or Keep open? Keep open allows user to verify number
+                document.getElementById('targetPosInput').value = newIdx + 1;
+            }
+
+            function closeDetailModal() {
+                document.getElementById('detailModal').style.display = 'none';
+                currentDetailIdx = -1;
+            }
 
             // --- Bulk Edit ---
             function toggleBulkEdit() {
@@ -1839,28 +1902,25 @@
                 renderLevelsList();
             }
 
-            // --- Drag & Drop ---
-            let dragSrc = null;
-            function handleDragStart(e) { dragSrc = this; e.dataTransfer.effectAllowed = 'move'; this.style.opacity = '0.4'; }
-            function handleDragOver(e) { if (e.preventDefault) e.preventDefault(); return false; }
-            function handleDrop(e) {
-                if (e.stopPropagation) e.stopPropagation();
-                if (dragSrc !== this) {
-                    const oldIdx = parseInt(dragSrc.dataset.index);
-                    const newIdx = parseInt(this.dataset.index);
-                    const levels = jsonData[currentSeriesIndex].Levels;
+            // --- SortableJS (Touch Friendly Drag & Drop) ---
+            new Sortable(document.getElementById('levelsList'), {
+                animation: 150,
+                handle: '.drag-handle', // Restrict drag to handle
+                onEnd: function (evt) {
+                    const oldIdx = evt.oldIndex;
+                    const newIdx = evt.newIndex;
+                    if (oldIdx === newIdx) return;
 
-                    if (newIdx < 0 || newIdx >= levels.length) return false;
-                    if (newIdx !== oldIdx) {
-                        const [item] = levels.splice(oldIdx, 1);
-                        levels.splice(newIdx, 0, item);
-                        renderLevelsList();
-                        markUnsaved();
-                    }
+                    const levels = jsonData[currentSeriesIndex].Levels;
+                    // Move in data array
+                    const [moved] = levels.splice(oldIdx, 1);
+                    levels.splice(newIdx, 0, moved);
+
+                    // Re-render to update index numbers (1, 2, 3...)
+                    renderLevelsList();
+                    markUnsaved();
                 }
-                return false;
-            }
-            function handleDragEnd() { this.style.opacity = '1'; }
+            });
 
             // --- Export / Copy ---
             function exportJson() {
@@ -1896,7 +1956,7 @@
                     const tr = document.createElement('tr');
                     tr.style.borderBottom = "1px solid #eee";
                     tr.innerHTML = `
-                    <td style="padding:10px; font-family:monospace; font-weight:bold;">${locale}</td>
+                    < td style = "padding:10px; font-family:monospace; font-weight:bold;" > ${locale}</td >
                     <td style="padding:10px;">
                         <span style="background:#e8f5e9; color:#27ae60; padding:2px 6px; border-radius:4px;">${targetKey}</span>
                     </td>
@@ -1926,7 +1986,7 @@
 
                 if (!locale || !target) { alert("请填写完整"); return; }
                 if (fullConfigData.mapping[locale]) {
-                    if (!confirm(`${locale} 已存在 (当前值: ${fullConfigData.mapping[locale]})，确定要覆盖吗？`)) {
+                    if (!confirm(`${locale} 已存在(当前值: ${fullConfigData.mapping[locale]})，确定要覆盖吗？`)) {
                         return;
                     }
                 }
@@ -1950,11 +2010,11 @@
                 // ACTUALLY: Let's use a prompt to ask for new Key. 
                 // To make it user friendly, we should probably list available keys in the prompt message.
                 const keys = Object.keys(fullConfigData.configs).join(', ');
-                const newKey = prompt(`正在编辑 [${locale}]。\n当前指向: ${currentTarget}\n\n请输入新的目标配置集 (必须是: ${keys}):`, currentTarget);
+                const newKey = prompt(`正在编辑[${locale}]。\n当前指向: ${currentTarget} \n\n请输入新的目标配置集(必须是: ${keys}): `, currentTarget);
 
                 if (newKey && newKey !== currentTarget) {
                     if (!fullConfigData.configs[newKey]) {
-                        alert(`错误: 配置集 "${newKey}" 不存在。\n\n可用值: ${keys}`);
+                        alert(`错误: 配置集 "${newKey}" 不存在。\n\n可用值: ${keys} `);
                         return;
                     }
                     fullConfigData.mapping[locale] = newKey;
@@ -1999,28 +2059,7 @@
                 if (event.target == mapModal) mapModal.style.display = "none";
             }
 
-            // --- Sticky Header Logic ---
-            const stickySentinel = document.createElement('div');
-            const stickyHeader = document.getElementById('stickyHeader');
-            if (stickyHeader) {
-                // Insert sentinel before the header
-                stickyHeader.parentNode.insertBefore(stickySentinel, stickyHeader);
 
-                const observer = new IntersectionObserver((entries) => {
-                    entries.forEach(entry => {
-                        if (!entry.isIntersecting && entry.boundingClientRect.top < 0) {
-                            stickyHeader.classList.add('is-stuck');
-                            stickyHeader.style.position = 'sticky';
-                            stickyHeader.style.top = '0';
-                        } else {
-                            stickyHeader.classList.remove('is-stuck');
-                            stickyHeader.style.position = 'relative';
-                        }
-                    });
-                }, { threshold: [1], rootMargin: '-10px 0px 0px 0px' });
-
-                observer.observe(stickySentinel);
-            }
         </script>
 </body>
 
