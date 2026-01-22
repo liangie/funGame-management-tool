@@ -821,7 +821,7 @@
                 <div class="card-actions">
                     <div class="action-row">
                         <input type="file" id="fileInput" accept=".json" style="display: none;">
-                        <button class="btn-card" onclick="document.getElementById('fileInput').click()">�
+                        <button class="btn-card" onclick="document.getElementById('fileInput').click()">📂
                             本地加载</button>
                         <button class="btn-card" onclick="loadRemoteSeriesConfig()">☁️ 网络加载</button>
                     </div>
@@ -850,8 +850,6 @@
                 <div class="card-actions">
                     <div class="action-row">
                         <input type="file" id="levelCfgInput" accept=".json" style="display: none;">
-                        <button class="btn-card" onclick="document.getElementById('levelCfgInput').click()">📂
-                            本地加载</button>
                         <button class="btn-card" onclick="document.getElementById('levelCfgInput').click()">📂
                             本地加载</button>
                         <button class="btn-card" id="btnRemoteLevelLoad" onclick="loadRemoteLevelConfig()">☁️
@@ -963,30 +961,75 @@
                 <div class="wiki-section">
                     <h3>1. 基础操作</h3>
                     <ul>
-                        <li>点击左上角的 <span class="wiki-tag">📂加载本地 SeriesCfg</span> 加载主数据文件。</li>
-                        <li><strong>(新)</strong> 点击 <span class="wiki-tag" style="color:#d35400;">📂加载本地 LevelCfg</span>
-                            上传
-                            <code>LevelCfg.json</code>。成功后，列表会自动显示游戏名称，并提供详情查看功能。
-                        </li>
-                        <li>在下拉菜单中切换不同的 Series ID (xl1, xl2...) 进行编辑。</li>
+                        <li><strong>Series Config 加载</strong>：点击 <span class="wiki-tag">📂本地加载</span> 或 <span
+                                class="wiki-tag">☁️网络加载</span> 加载主配置文件。</li>
+                        <li><strong>Level Config 加载</strong>：点击 <span class="wiki-tag"
+                                style="color:#d35400;">📂本地加载</span> 或 <span class="wiki-tag">☁️网络加载</span>
+                            上传关卡详情配置。加载成功后，列表会显示游戏名称并提供详情查看功能。</li>
+                        <li><strong>配置集管理</strong>：支持多配置集 (base_global, base_us 等)，可通过下拉菜单切换，支持新建、复制、重命名、删除配置集。</li>
+                        <li><strong>地区映射</strong>：设置不同地区 (Locale) 使用哪套配置，例如 US -> base_us，CN -> base_cn。</li>
                     </ul>
                 </div>
 
                 <div class="wiki-section">
-                    <h3>2. Levels 列表与详情</h3>
+                    <h3>2. Series 编辑功能</h3>
                     <ul>
-                        <li><strong>排序</strong>：支持鼠标拖拽或点击右侧箭头。</li>
-                        <li><strong>查看详情</strong>：如果加载了配置，点击列表项右侧的 <span class="wiki-tag">ℹ️</span> 图标，可查看该关卡的完整 JSON
-                            信息（Path, Stages, Rule 等）。</li>
+                        <li><strong>选择 Series</strong>：在 ID 选择器中切换不同的 Series ID (xl1, xl2 等) 进行编辑。</li>
+                        <li><strong>基本属性</strong>：编辑 Order (排序) 和 Img (图片名) 字段。</li>
+                        <li><strong>新增/删除 Series</strong>：通过相应按钮添加新的 Series 或删除当前选中的 Series。</li>
+                        <li><strong>冲突检测</strong>：自动检测并显示重复的 ID，用 "(❌冲突)" 标记。</li>
                     </ul>
                 </div>
 
                 <div class="wiki-section">
-                    <h3>3. 批量编辑 (Bulk Edit)</h3>
+                    <h3>3. Levels 列表管理</h3>
                     <ul>
-                        <li>支持从 Excel 或文本中粘贴 ID 列表。</li>
-                        <li><strong>智能合并</strong>：默认将新 ID 置顶，旧 ID 顺延。</li>
-                        <li><strong>覆盖模式</strong>：勾选 Checkbox 后，完全替换现有列表。</li>
+                        <li><strong>排序</strong>：支持鼠标拖拽重新排序，或使用右侧的 ↑↓ 按钮移动。</li>
+                        <li><strong>查看详情</strong>：如果加载了 LevelCfg，点击列表项右侧的 <span class="wiki-tag">ℹ️</span> 图标可查看该关卡的完整
+                            JSON 信息（Path, Stages, Rule 等）。</li>
+                        <li><strong>新增关卡</strong>：点击 "+ 新增一项" 按钮，支持单个或批量添加（逗号分隔）。</li>
+                        <li><strong>删除关卡</strong>：点击右侧的 ✕ 按钮删除指定项。</li>
+                        <li><strong>游戏名称显示</strong>：加载 LevelCfg 后，列表会显示关卡对应的游戏名称。</li>
+                    </ul>
+                </div>
+
+                <div class="wiki-section">
+                    <h3>4. 批量编辑 (Bulk Edit)</h3>
+                    <ul>
+                        <li><strong>批量导入</strong>：支持从 Excel 或文本中粘贴 ID 列表（支持逗号、换行分隔）。</li>
+                        <li><strong>智能合并</strong>：默认模式将新 ID 置顶，旧 ID 自动顺延，避免数据丢失。</li>
+                        <li><strong>覆盖模式</strong>：勾选 "覆盖现有列表" 后，完全替换现有列表。</li>
+                        <li><strong>加载当前列表</strong>：点击 "加载当前列表" 可将现有数据填充到编辑框中。</li>
+                    </ul>
+                </div>
+
+                <div class="wiki-section">
+                    <h3>5. 云端功能</h3>
+                    <ul>
+                        <li><strong>网络加载</strong>：通过 Cloudflare Worker 从远程 Gist 加载配置文件。</li>
+                        <li><strong>保存到网络</strong>：编辑完成后可保存到远程 Gist，支持自动链式加载 SeriesCfg 和 LevelCfg。</li>
+                        <li><strong>设置管理</strong>：首次使用时需要配置 Worker URL 和访问密码。</li>
+                        <li><strong>状态指示</strong>：通过颜色状态点显示本地/远程加载状态（绿色=成功，红色=失败）。</li>
+                    </ul>
+                </div>
+
+                <div class="wiki-section">
+                    <h3>6. 数据管理</h3>
+                    <ul>
+                        <li><strong>导出 JSON</strong>：点击 "📤 导出 JSON" 下载完整的配置文件。</li>
+                        <li><strong>复制 JSON</strong>：点击 "📋 复制" 将完整配置复制到剪贴板。</li>
+                        <li><strong>格式兼容</strong>：自动检测并转换旧版数组格式到新版结构 (configs + mapping)。</li>
+                        <li><strong>未保存提醒</strong>：有未保存修改时，标题栏显示 "*" 号，关闭页面时会提醒保存。</li>
+                    </ul>
+                </div>
+
+                <div class="wiki-section">
+                    <h3>7. 界面特性</h3>
+                    <ul>
+                        <li><strong>粘性工具栏</strong>：滚动时工具栏自动吸附顶部，方便操作。</li>
+                        <li><strong>卡片式布局</strong>：Series Config 和 Level Config 采用卡片设计，状态清晰。</li>
+                        <li><strong>响应式设计</strong>：适配不同屏幕尺寸，支持移动端操作。</li>
+                        <li><strong>回到顶部</strong>：滚动超过 300px 时显示浮动按钮。</li>
                     </ul>
                 </div>
 
