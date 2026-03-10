@@ -832,6 +832,26 @@
                             复制</button>
                     </div>
                 </div>
+
+                <!-- Metadata Row (Right Aligned, Separate Line) -->
+                <div
+                    style="flex-basis: 100%; display:flex; justify-content:flex-end; gap:15px; margin-top:2px; align-items:center;">
+                    <div style="display:flex; align-items:center; gap:5px;">
+                        <label for="authorSelect" style="font-size:0.85em; color:#666; margin:0;">修改人:</label>
+                        <select id="authorSelect"
+                            style="padding:3px; font-size:0.85em; border: 1px solid #ddd; border-radius:3px; cursor: pointer;"
+                            onchange="markUnsaved()">
+                            <option value="admin-pyl" selected>admin-pyl</option>
+                            <option value="admin-hj">admin-hj</option>
+                        </select>
+                    </div>
+                    <div style="display:flex; align-items:center; gap:5px;">
+                        <label for="updateTimeInput" style="font-size:0.85em; color:#666; margin:0;">修改时间:</label>
+                        <input type="text" id="updateTimeInput"
+                            style="padding:3px; font-size:0.85em; border: 1px solid #ddd; background-color: #f5f5f5; border-radius:3px; width:145px; color:#555; text-align: center;"
+                            readonly value="-">
+                    </div>
+                </div>
             </div>
 
             <!-- Card 2: Level Config -->
@@ -885,6 +905,14 @@
                             style="display:block; font-size:0.9em; color:#666; margin-bottom:4px;">选择配置项 ID (Select
                             ID):</label>
                         <select id="idSelect" style="width:100%; padding:5px;" onchange="loadSelectedSeries()"></select>
+                    </div>
+                    <div style="flex:0.5;">
+                        <label for="versionInput"
+                            style="display:block; font-size:0.9em; color:#666; margin-bottom:4px;">版本号
+                            (Version):</label>
+                        <input type="number" id="versionInput"
+                            style="width:100%; padding:5px; border: 1px solid #ddd; background-color: #f5f5f5; border-radius: 4px;"
+                            readonly value="1">
                     </div>
                 </div>
             </div>
@@ -1226,6 +1254,8 @@
 
 
                     initConfigKeySelector();
+                    if (fullConfigData.version === undefined) fullConfigData.version = 1;
+                    document.getElementById('versionInput').value = fullConfigData.version;
 
                     // Update New File Info Display
                     const displayEl = document.getElementById('seriesPathDisplay');
@@ -1319,6 +1349,33 @@
                 }
             }
 
+            function getBeijingTime() {
+                const now = new Date();
+                // Get UTC time in ms
+                const utc = now.getTime() + (now.getTimezoneOffset() * 60000);
+                // Create new Date object for offset +8
+                const bjTime = new Date(utc + (3600000 * 8));
+
+                const yyyy = bjTime.getFullYear();
+                const mm = String(bjTime.getMonth() + 1).padStart(2, '0');
+                const dd = String(bjTime.getDate()).padStart(2, '0');
+                const hh = String(bjTime.getHours()).padStart(2, '0');
+                const min = String(bjTime.getMinutes()).padStart(2, '0');
+                const ss = String(bjTime.getSeconds()).padStart(2, '0');
+
+                return `${yyyy}-${mm}-${dd} ${hh}:${min}:${ss}`;
+            }
+
+            function updateMetadataForSave() {
+                fullConfigData.version = (fullConfigData.version || 0) + 1;
+                fullConfigData.author = document.getElementById('authorSelect').value;
+                fullConfigData.updateTime = getBeijingTime();
+
+                // Update UI visually
+                document.getElementById('versionInput').value = fullConfigData.version;
+                document.getElementById('updateTimeInput').value = fullConfigData.updateTime;
+            }
+
             async function saveToRemote() {
                 if (!workerConfig.url || !workerConfig.pwd) {
                     showOnlineSettings();
@@ -1333,6 +1390,9 @@
                 btn.disabled = true;
 
                 try {
+                    // Inject Metadata Fields before saving
+                    updateMetadataForSave();
+
                     // Construct the Gist payload
                     const payload = {
                         files: {
@@ -1419,6 +1479,11 @@
 
                         // 2. Initialize UI
                         initConfigKeySelector();
+                        if (fullConfigData.version === undefined) fullConfigData.version = 1;
+                        document.getElementById('versionInput').value = fullConfigData.version;
+
+                        if (fullConfigData.author) document.getElementById('authorSelect').value = fullConfigData.author;
+                        if (fullConfigData.updateTime) document.getElementById('updateTimeInput').value = fullConfigData.updateTime;
                         // Removed old status element update
 
                         document.getElementById('exportBtn').disabled = false;
@@ -1495,6 +1560,7 @@
             }
 
             // --- Config Set Modal Logic ---
+
             function showConfigSetModal() {
                 const tbody = document.getElementById('configSetTableBody');
                 tbody.innerHTML = '';
@@ -1924,6 +1990,7 @@
 
             // --- Export / Copy ---
             function exportJson() {
+                updateMetadataForSave();
                 const str = JSON.stringify(fullConfigData, null, 2);
                 const blob = new Blob([str], { type: "application/json" });
                 const url = URL.createObjectURL(blob);
@@ -1933,6 +2000,7 @@
             }
 
             async function copyJson() {
+                updateMetadataForSave();
                 const str = JSON.stringify(fullConfigData, null, 2);
                 try {
                     await navigator.clipboard.writeText(str);

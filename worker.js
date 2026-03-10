@@ -196,6 +196,9 @@ export default {
 
                 // Return Optimized JSON
                 const clientResponse = {
+                    version: fullData.version || 1,
+                    author: fullData.author || "system",
+                    update_time: fullData.updateTime || "",
                     detected_country: country,
                     used_config_key: configKey,
                     data: specificConfig
